@@ -97,10 +97,7 @@ registerForm.addEventListener("submit", (event) => {
     users.push({ name, email, password, tickets: [] });
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
     localStorage.setItem(SESSION_KEY, email);
-    registerForm.reset();
-    authDialog.close();
-    updateSessionButton();
-    showToast(`¡Bienvenido, ${name}!`);
+    window.location.href = "Catalogo/index.html";
 });
 
 loginForm.addEventListener("submit", (event) => {
@@ -121,10 +118,7 @@ loginForm.addEventListener("submit", (event) => {
     }
 
     localStorage.setItem(SESSION_KEY, user.email);
-    loginForm.reset();
-    authDialog.close();
-    updateSessionButton();
-    showToast(`¡Bienvenido, ${user.name}!`);
+    window.location.href = "Catalogo/index.html";
 });
 
 updateSessionButton();
