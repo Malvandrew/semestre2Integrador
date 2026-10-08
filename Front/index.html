@@ -3,9 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinemax Cesde</title>
+    <meta name="theme-color" content="#101010">
+    <meta name="description" content="Cinemax Cesde conecta al público con experiencias de cine y emprendimientos del centro de Medellín.">
+    <title>Cinemax Cesde | Cine en el centro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+    <header class="site-header">
+        <a class="brand" href="#inicio" aria-label="Cinemax Cesde, ir al inicio">
+            <span class="brand-mark" aria-hidden="true">C</span>
+            <span>CINEMAX <b>CESDE</b></span>
+        </a>
+        <nav class="main-nav" aria-label="Navegación principal">
+            <a href="#nosotros">Nosotros</a>
+            <a href="#historia">Historia</a>
+            <a href="#aliados">Aliados</a>
+        </nav>
+        <button class="button button-small button-yellow" id="authButton" type="button">Iniciar sesión</button>
+    </header>
+
+    <main>
+        <section class="hero" id="inicio" aria-labelledby="heroTitle">
+            <div class="hero-content">
+                <p class="eyebrow"><span></span> EL CINE SE VIVE EN EL CENTRO</p>
+                <h1 id="heroTitle">Tu próxima<br>gran historia<br><em>empieza aquí.</em></h1>
+                <p class="hero-copy">Descubre funciones, encuentra tu próximo plan y disfruta el cine con otra perspectiva.</p>
+                <a class="button button-yellow" href="#nosotros">Conoce el proyecto <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="hero-note"><span>MEDELLÍN</span><span>·</span><span>LUZ, CÁMARA, ACCIÓN</span></div>
+            <div class="hero-index" aria-hidden="true">01 / 03</div>
+        </section>
+
+        <section class="about section-wrap" id="nosotros">
+            <div class="section-kicker"><span>01</span> QUIÉNES SOMOS</div>
+            <div class="about-copy">
+                <h2>Una pantalla para<br><span>nuevas ideas.</span></h2>
+                <p>Somos un proyecto de venta de tickets de cine. Si tienes un emprendimiento en el sector del centro de Medellín, podemos apoyarte integrándolo en esta web y acercándolo a nuevas audiencias.</p>
+                <a class="text-link" href="#aliados">Conoce nuestra propuesta <span aria-hidden="true">→</span></a>
+            </div>
+            <div class="about-stamp" aria-label="Cultura local, gran pantalla"><span>CULTURA LOCAL</span><b>×</b><span>GRAN PANTALLA</span></div>
+        </section>
+
+        <section class="history section-wrap" id="historia">
+            <div class="section-kicker"><span>02</span> NUESTRA HISTORIA</div>
+            <div class="history-grid">
+                <h2>De una idea<br>a una experiencia.</h2>
+                <div class="timeline">
+                    <article class="timeline-item">
+                        <span class="timeline-date">2026 — 1</span>
+                        <div><h3>El primer acto</h3><p>Iniciamos como proyecto integrador. Planteamos avances en el diseño de base de datos y en la construcción de un front web básico.</p></div>
+                    </article>
+                    <article class="timeline-item">
+                        <span class="timeline-date">2026 — 2</span>
+                        <div><h3>Una nueva pantalla</h3><p>Mejoramos el estilo visual con JavaScript y sumamos funciones más avanzadas, como la integración con base de datos.</p></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="allies" id="aliados">
+            <div class="allies-inner"><div><div class="section-kicker"><span>03</span> CONECTAMOS LO LOCAL</div><h2>Tu negocio también<br>puede ser parte.</h2></div><p>¿Tienes un emprendimiento en el centro de Medellín? Queremos sumar propuestas locales a esta experiencia.</p><a class="button button-magenta" href="mailto:cinemaxcesde@gmail.com">Hablemos <span aria-hidden="true">↗</span></a></div>
+        </section>
+    </main>
+
+    <footer class="site-footer"><a class="brand" href="#inicio"><span class="brand-mark" aria-hidden="true">C</span><span>CINEMAX <b>CESDE</b></span></a><p>Un proyecto integrador · Medellín, Colombia</p><a href="#inicio">Volver arriba ↑</a></footer>
+
+    <dialog class="modal" id="authDialog" aria-labelledby="authTitle">
+        <form method="dialog"><button class="modal-close" aria-label="Cerrar" value="close">×</button></form>
+        <p class="section-kicker"><span>✦</span> ACCEDE A TU CUENTA</p>
+        <h2 id="authTitle">Qué bueno verte.</h2>
+        <div class="auth-tabs" role="tablist" aria-label="Acceso a cuenta"><button class="auth-tab is-active" type="button" role="tab" aria-selected="true" data-auth-mode="login">Iniciar sesión</button><button class="auth-tab" type="button" role="tab" aria-selected="false" data-auth-mode="register">Crear cuenta</button></div>
+        <p class="form-message" id="authMessage" role="alert" hidden></p>
+        <form id="loginForm" class="auth-form">
+            <label>Correo electrónico<input name="email" type="email" autocomplete="email" placeholder="tu@correo.com" required></label>
+            <label>Contraseña<input name="password" type="password" autocomplete="current-password" placeholder="Tu contraseña" required></label>
+            <button class="button button-yellow form-submit" type="submit">Entrar a mi cuenta <span aria-hidden="true">→</span></button>
+        </form>
+        <form id="registerForm" class="auth-form" hidden>
+            <label>Nombre completo<input name="name" type="text" autocomplete="name" placeholder="¿Cómo te llamas?" required minlength="2"></label>
+            <label>Correo electrónico<input name="email" type="email" autocomplete="email" placeholder="tu@correo.com" required></label>
+            <label>Contraseña<input name="password" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres" required minlength="6"></label>
+            <button class="button button-yellow form-submit" type="submit">Crear mi cuenta <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="modal-footnote">Acceso de demostración para Cinemax Cesde.</p>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="script.js" defer></script>
 </body>
 </html>
