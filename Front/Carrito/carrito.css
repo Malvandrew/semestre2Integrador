@@ -1,0 +1,62 @@
+/* Solo afecta la página del carrito. La paleta viene de styles.css. */
+/* display: grid o flex no debe volver visibles las secciones con hidden. */
+.carrito-pagina [hidden] { display: none !important; }
+.carrito-pagina { min-height: 72vh; background: radial-gradient(circle at 85% 0%, rgba(255,0,170,.10), transparent 40%); }
+.volver-cartelera { display: inline-block; color: #bbb; font-size: .9rem; margin-bottom: 30px; }
+.volver-cartelera:hover { color: var(--amarillo); }
+.carrito-etiqueta { color: var(--fucsia); font-weight: 800; font-size: .8rem; letter-spacing: .15em; margin-bottom: 10px; }
+.carrito-pagina h1 { font-size: 2.3rem; margin-bottom: 14px; }
+.carrito-intro { color: #ccc; max-width: 680px; margin-bottom: 26px; }
+.pasos-compra { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; margin-bottom: 30px; }
+.pasos-compra li { padding: 8px 16px; border: 1px solid var(--gris-2); border-radius: 20px; font-size: .85rem; color: #aaa; }
+.pasos-compra [aria-current="step"] { border-color: var(--fucsia); color: var(--blanco); background: rgba(255,0,170,.12); }
+.carrito-layout { display: flex; gap: 24px; align-items: flex-start; }
+.carrito-panel { flex: 1; min-width: 0; }
+.carrito-panel, .carrito-vacio, .compra-confirmada { background: var(--gris); border: 1px solid #343034; border-radius: 12px; padding: 24px; }
+.carrito-panel .subtitulo { margin: 0 0 8px; font-size: 1.2rem; }
+.panel-ayuda { color: #aaa; font-size: .88rem; margin-bottom: 18px; }
+.entrada-item { display: flex; align-items: center; gap: 16px; padding: 22px 0; border-bottom: 1px dashed #454045; }
+.entrada-item:last-child { border-bottom: 0; }
+.entrada-asiento { flex-shrink: 0; width: 54px; height: 62px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--fucsia); border-radius: 10px; color: var(--amarillo); background: #240019; font-size: 1.2rem; font-weight: 800; }
+.entrada-datos { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.entrada-item h3 { font-size: 1.1rem; margin: 4px 0; }
+.entrada-item p { color: #ccc; font-size: .88rem; margin-top: 3px; }
+.entrada-tipo { color: var(--fucsia); font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+.entrada-precio { text-align: right; }
+.entrada-precio strong { display: block; color: var(--amarillo); margin-bottom: 8px; white-space: nowrap; }
+.btn-peligro { border: 1px solid #755367; color: #ffc0e7; background: transparent; border-radius: 8px; padding: 8px 12px; font: inherit; font-size: .85rem; cursor: pointer; }
+.btn-peligro:hover { border-color: var(--fucsia); background: rgba(255,0,170,.12); }
+.carrito-acciones { display: flex; flex-wrap: wrap; gap: 12px; padding-top: 22px; border-top: 1px solid var(--gris-2); }
+.carrito-acciones .btn { font-size: .9rem; padding: 10px 14px; }
+.resumen-compra { flex: 0 0 320px; border-top: 3px solid var(--fucsia); }
+.linea-resumen { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--gris-2); color: #ccc; }
+.linea-resumen strong { color: var(--blanco); }
+.total-compra { border-bottom: 0; align-items: center; font-size: 1.1rem; }
+.total-compra strong { color: var(--amarillo); font-size: 1.7rem; }
+.nota-carrito { color: #aaa; font-size: .84rem; line-height: 1.6; }
+.btn-confirmar { width: 100%; margin-top: 20px; }
+.mensaje-carrito { margin-bottom: 20px; padding: 12px 16px; border-left: 3px solid var(--amarillo); background: #231f12; color: var(--amarillo); }
+.mensaje-carrito:empty { display: none; }
+.carrito-vacio, .compra-confirmada { text-align: center; max-width: 680px; margin: 35px auto; padding: 40px 24px; }
+.carrito-vacio h2, .compra-confirmada h2 { margin: 12px 0; }
+.carrito-vacio p, .compra-confirmada p { color: #ccc; line-height: 1.7; overflow-wrap: anywhere; margin-bottom: 16px; }
+.carrito-vacio .btn, .compra-confirmada .btn { margin-top: 12px; }
+.icono-vacio { font-size: 3.5rem; color: var(--fucsia); }
+.confirmacion-icono { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; margin: 0 auto; border-radius: 50%; background: #240019; border: 1px solid var(--fucsia); color: var(--amarillo); font-size: 2rem; }
+.carrito-pagina button:focus-visible, .carrito-pagina a:focus-visible { outline: 2px solid var(--amarillo); outline-offset: 4px; }
+.menu [aria-current="page"] { color: var(--amarillo); border-color: var(--amarillo); }
+@media (max-width: 900px) {
+  .carrito-layout { flex-direction: column; }
+  .carrito-panel, .resumen-compra { width: 100%; flex: auto; }
+}
+@media (max-width: 480px) {
+  .carrito-pagina h1 { font-size: 1.75rem; }
+  .carrito-panel { padding: 18px; }
+  .entrada-item { flex-wrap: wrap; gap: 12px; }
+  .entrada-precio { width: 100%; display: flex; justify-content: space-between; align-items: center; text-align: left; }
+  .entrada-precio strong { margin: 0; }
+  .carrito-acciones { flex-direction: column; }
+  .carrito-acciones .btn, .carrito-acciones button { width: 100%; text-align: center; }
+  .pasos-compra { gap: 6px; }
+  .pasos-compra li { font-size: .74rem; padding: 7px 10px; }
+}
