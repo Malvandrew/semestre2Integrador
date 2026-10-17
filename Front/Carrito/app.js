@@ -24,10 +24,14 @@ const moneda = n => n.toLocaleString("es-CO", { style: "currency", currency: "CO
 function pintarCatalogo() {
   el.lista.innerHTML = Almacen.obtenerFunciones().map(f => `
     <button class="tarjeta" data-id="${f.id}" aria-label="Ver función ${f.titulo}">
-      <div class="poster" style="background:${f.color}"><span>${f.titulo}</span></div>
+      <div class="poster" style="background:${f.color}">
+        <img class="poster-img" src="${f.imagen}" alt="Póster de ${f.titulo}">
+        <span>${f.titulo}</span>
+      </div>
       <div class="tarjeta-cuerpo">
         <span class="etiqueta">${f.genero}</span>
         <p>${f.duracion} min · ${Almacen.obtenerSala(f.salaId).nombre}</p>
+        <p class="tarjeta-desc">${f.descripcion}</p>
       </div>
     </button>`).join("");
 }

@@ -21,7 +21,7 @@ const CLAVES = {
 /* Cada vez que cambies los datos iniciales, sube este número.
    Los navegadores que tengan guardada otra versión se reinician
    con los datos de abajo (ver Almacen.iniciar). */
-const VERSION_DATOS = "2";
+const VERSION_DATOS = "3";
 
 /* ---------- Datos iniciales (seed) ---------- */
 const DATOS_INICIALES = {
@@ -35,31 +35,36 @@ const DATOS_INICIALES = {
   funciones: [
     {
       id: "f1", titulo: "Noche de Neón", genero: "Acción", duracion: 118,
-      descripcion: "Una mensajera nocturna descubre un secreto que puede apagar toda la ciudad.",
+      descripcion: "Dos agentes persiguen a una red criminal por una ciudad que nunca apaga sus luces.",
+      imagen: "Imagenes/funcion-02.jpg",
       salaId: "s1", color: "linear-gradient(135deg,#ff00aa,#1a001a)",
       horarios: [{ id: "h1", hora: "14:00" }, { id: "h2", hora: "17:30" }, { id: "h3", hora: "20:45" }]
     },
     {
-      id: "f2", titulo: "El Último Código", genero: "Suspenso", duracion: 104,
-      descripcion: "Un programador tiene 24 horas para detener un virus que él mismo escribió.",
+      id: "f2", titulo: "Tierra Roja", genero: "Ciencia ficción", duracion: 104,
+      descripcion: "Una astronauta queda sola en Marte y debe volver a casa antes de que se acabe el oxígeno.",
+      imagen: "Imagenes/funcion-04.jpg",
       salaId: "s2", color: "linear-gradient(135deg,#ffd400,#1a1400)",
       horarios: [{ id: "h1", hora: "15:00" }, { id: "h2", hora: "18:00" }, { id: "h3", hora: "21:00" }]
     },
     {
-      id: "f3", titulo: "Ruta 91", genero: "Aventura", duracion: 126,
-      descripcion: "Cuatro amigos, una carretera sin fin y un mapa que no coincide con la realidad.",
+      id: "f3", titulo: "El Último Reino", genero: "Aventura", duracion: 126,
+      descripcion: "Un guerrero solitario defiende la ciudad que lo vio nacer de un ejército invasor.",
+      imagen: "Imagenes/funcion-01.jpg",
       salaId: "s3", color: "linear-gradient(135deg,#ff00aa,#ffd400)",
       horarios: [{ id: "h1", hora: "13:30" }, { id: "h2", hora: "16:30" }, { id: "h3", hora: "19:30" }]
     },
     {
-      id: "f4", titulo: "Sombras del Mar", genero: "Terror", duracion: 97,
-      descripcion: "Un faro abandonado guarda algo que no quiere ser encontrado.",
+      id: "f4", titulo: "El Pasillo", genero: "Terror", duracion: 97,
+      descripcion: "Una joven vuelve a la casa de su infancia y descubre que no está sola.",
+      imagen: "Imagenes/funcion-05.jpg",
       salaId: "s1", color: "linear-gradient(135deg,#2b0020,#ff00aa)",
       horarios: [{ id: "h1", hora: "16:00" }, { id: "h2", hora: "19:00" }, { id: "h3", hora: "22:00" }]
     },
     {
-      id: "f5", titulo: "Risas en Re Mayor", genero: "Comedia", duracion: 101,
-      descripcion: "Una banda de garaje compite en un festival con un solo ensayo y cero talento.",
+      id: "f5", titulo: "Lluvia en París", genero: "Romance", duracion: 101,
+      descripcion: "Dos desconocidos comparten un paraguas y una noche que les cambia la vida.",
+      imagen: "Imagenes/funcion-03.jpg",
       salaId: "s2", color: "linear-gradient(135deg,#ffd400,#ff00aa)",
       horarios: [{ id: "h1", hora: "14:30" }, { id: "h2", hora: "17:00" }, { id: "h3", hora: "20:00" }]
     }
