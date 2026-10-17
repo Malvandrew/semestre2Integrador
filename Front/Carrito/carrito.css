@@ -60,3 +60,9 @@
   .pasos-compra { gap: 6px; }
   .pasos-compra li { font-size: .74rem; padding: 7px 10px; }
 }
+/* Cantidad y orden */
+.cantidad { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.btn-cantidad { width: 32px; height: 32px; border: 1px solid var(--fucsia); border-radius: 8px; background: transparent; color: var(--blanco); cursor: pointer; }
+.btn-cantidad:disabled { opacity: .35; cursor: not-allowed; }
+.resumen-orden { list-style: none; text-align: left; margin-bottom: 16px; }
+.resumen-orden li { padding: 12px 0; border-bottom: 1px solid var(--gris-2); color: #ccc; }
