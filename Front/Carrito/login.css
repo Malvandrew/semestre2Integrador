@@ -1,0 +1,21 @@
+/* Solo afecta la página de inicio de sesión. La paleta viene de styles.css. */
+.cuenta-pagina [hidden] { display: none !important; }
+.cuenta-pagina { min-height: 72vh; background: radial-gradient(circle at 85% 0%, rgba(255,0,170,.10), transparent 40%); }
+.cuenta-caja { max-width: 460px; margin: 0 auto; background: var(--gris); border: 1px solid #343034; border-radius: 12px; padding: 28px; }
+.cuenta-caja h1 { font-size: 1.8rem; margin-bottom: 6px; }
+.cuenta-caja p { color: #ccc; margin-bottom: 18px; }
+.formulario label { display: block; margin-bottom: 14px; color: #ccc; font-size: .9rem; }
+.formulario input { display: block; width: 100%; margin-top: 6px; padding: 10px 12px; border: 1px solid var(--gris-2); border-radius: 8px; background: var(--negro); color: var(--blanco); font: inherit; }
+.formulario input:focus { outline: none; border-color: var(--fucsia); }
+.formulario .btn { width: 100%; margin-top: 6px; text-align: center; }
+.enlace-cuenta { display: block; width: 100%; margin-top: 14px; background: none; border: 0; color: var(--amarillo); font: inherit; cursor: pointer; text-decoration: underline; }
+.mensaje-cuenta { margin-bottom: 16px; padding: 12px 16px; border-left: 3px solid var(--amarillo); background: #231f12; color: var(--amarillo); }
+.mensaje-cuenta:empty { display: none; }
+.cuenta-acciones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.cuenta-acciones .btn { flex: 1; text-align: center; }
+.cuenta-pagina button:focus-visible, .cuenta-pagina a:focus-visible { outline: 2px solid var(--amarillo); outline-offset: 4px; }
+.menu [aria-current="page"] { color: var(--amarillo); border-color: var(--amarillo); }
+@media (max-width: 480px) {
+  .cuenta-caja { padding: 18px; }
+  .cuenta-acciones { flex-direction: column; }
+}
