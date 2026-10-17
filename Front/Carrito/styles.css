@@ -121,6 +121,7 @@ i.asiento { width: 18px; cursor: default; }
 }
 .aviso { color: var(--amarillo); font-size: .9rem; min-height: 1.3em; }
 
+
 /* ===== Footer ===== */
 .pie { background: var(--gris); border-top: 2px solid var(--fucsia); margin-top: 40px; padding-top: 30px; }
 .pie-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
