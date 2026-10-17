@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema de Venta de Tickets</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ================= MENÚ DE NAVEGACIÓN ================= -->
+  <header class="cabecera">
+    <div class="contenedor barra">
+      <a href="index.html" class="logo">Sistema<span>Ventas</span></a>
+      <button class="btn-menu" id="btnMenu" aria-label="Abrir menú" aria-expanded="false">☰</button>
+      <nav class="menu" id="menu">
+        <a href="index.html">Inicio</a>
+        <a href="#catalogo">Cartelera</a>
+        <a href="carrito.html">Carrito</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= PORTADA ================= -->
+    <section class="hero">
+      <div class="contenedor">
+        <h1>Nueva Forma  <span class="resalte">De Ver Cine Independiente</span></h1>
+        <p>Elige tu función, tu horario y tus asientos en pocos clics.</p>
+        <a href="#catalogo" class="btn btn-primario">Ver cartelera</a>
+      </div>
+    </section>
+
+    <!-- ================= CATÁLOGO ================= -->
+    <section id="catalogo" class="seccion">
+      <div class="contenedor">
+        <h2 class="titulo-seccion">Cartelera</h2>
+        <div class="grid-funciones" id="listaFunciones"></div>
+      </div>
+    </section>
+
+    <!-- ================= DETALLE: horarios + asientos ================= -->
+    <section id="detalle" class="seccion detalle" hidden>
+      <div class="contenedor">
+        <div class="detalle-cabecera">
+          <div>
+            <h2 id="detTitulo" class="titulo-seccion"></h2>
+            <p id="detInfo" class="info"></p>
+          </div>
+          <button class="btn btn-secundario" id="btnCerrar">Cerrar ✕</button>
+        </div>
+
+        <h3 class="subtitulo">1. Elige un horario</h3>
+        <div class="horarios" id="listaHorarios"></div>
+
+        <div id="zonaAsientos" hidden>
+          <h3 class="subtitulo">2. Elige tus asientos</h3>
+
+          <div class="leyenda">
+            <span><i class="asiento vip"></i> VIP <b id="precioVip"></b></span>
+            <span><i class="asiento general"></i> General <b id="precioGeneral"></b></span>
+            <span><i class="asiento seleccionado"></i> Seleccionado</span>
+            <span><i class="asiento ocupado"></i> Ocupado</span>
+          </div>
+
+          <div class="pantalla">PANTALLA</div>
+          <div class="mapa" id="mapaAsientos"></div>
+
+          <div class="resumen">
+            <div>
+              <p>Asientos: <b id="resAsientos" class="resalte">—</b></p>
+              <p>Total: <b id="resTotal" class="resalte">$0</b></p>
+              <p class="aviso" id="aviso" role="status"></p>
+            </div>
+            <button class="btn btn-primario" id="btnContinuar" disabled>Continuar al carrito</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="pie" id="contacto">
+    <div class="contenedor pie-grid">
+      <div>
+        <h4>Ventas<span class="resalte">Ventas</span></h4>
+        <p>Proyecto académico — Metodología Scrum.</p>
+      </div>
+      <div>
+        <h4>Navegación</h4>
+        <p><a href="#catalogo">Cartelera</a></p>
+        <p><a href="carrito.html">Carrito</a></p>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <p>contacto@ventas.com</p>
+        <p>Medellín, Colombia</p>
+      </div>
+    </div>
+    <p class="copy">© 2026 Sistema de Venta de Tickets · Todos los derechos reservados</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
