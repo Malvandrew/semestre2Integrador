@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito de compras | CINEMAX CESDE</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="carrito.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="contenedor barra">
+      <a class="logo" href="index.html">Cinemax<span> Cesde</span></a>
+      <button class="btn-menu" id="btnMenu" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú">☰</button>
+      <nav class="menu" id="menu">
+        <a href="index.html">Inicio</a>
+        <a href="index.html#catalogo">Cartelera</a>
+        <a href="carrito.html" aria-current="page">Carrito</a>
+        <a href="index.html#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="seccion carrito-pagina">
+    <div class="contenedor">
+      <a class="volver-cartelera" href="index.html#catalogo">← Volver a la cartelera</a>
+      <p class="carrito-etiqueta">TUS ENTRADAS DE CINE</p>
+      <h1 class="titulo-seccion">Tu carrito de compras</h1>
+      <p class="carrito-intro">Revisa tus entradas, cambia la cantidad o elimínalas antes de confirmar tu compra.</p>
+      <ol class="pasos-compra" aria-label="Pasos de compra"><li>1 · Selección</li><li id="pasoCarrito" aria-current="step">2 · Carrito</li><li id="pasoOrden">3 · Orden</li></ol>
+      <div id="mensajeCarrito" class="mensaje-carrito" role="status" aria-live="polite"></div>
+
+      <!-- ===== Carrito: productos, cantidades y total ===== -->
+      <section id="carritoContenido" class="carrito-layout" hidden>
+        <div class="carrito-panel">
+          <h2 class="subtitulo">Tus entradas</h2>
+          <p class="panel-ayuda">Cambia la cantidad con − y +, o elimina un tipo de entrada antes de confirmar.</p>
+          <div id="detalleEntradas"></div>
+          <div class="carrito-acciones">
+            <a class="btn btn-secundario" href="index.html#catalogo">Seguir viendo cartelera</a>
+            <button class="btn-peligro" id="btnVaciar" type="button">Vaciar carrito</button>
+          </div>
+        </div>
+        <aside class="carrito-panel resumen-compra">
+          <h2 class="subtitulo">Resumen de compra</h2>
+          <div class="linea-resumen"><span>Entradas</span><strong id="cantidadEntradas">0</strong></div>
+          <div class="linea-resumen"><span>Subtotal</span><strong id="subtotalCarrito">$0</strong></div>
+          <div class="linea-resumen total-compra"><span>Total</span><strong id="totalCarrito">$0</strong></div>
+          <p class="nota-carrito">Esta versión académica simula la compra. No se realiza ningún cobro real.</p>
+          <button class="btn btn-primario btn-confirmar" id="btnConfirmar" type="button" disabled>Confirmar compra</button>
+        </aside>
+      </section>
+
+      <section id="carritoVacio" class="carrito-vacio" hidden>
+        <div class="icono-vacio" aria-hidden="true">▱</div>
+        <h2>Tu carrito está vacío</h2>
+        <p>Primero elige una película, un horario y al menos un asiento en la cartelera.</p>
+        <a class="btn btn-primario" href="index.html#catalogo">Ir a la cartelera</a>
+      </section>
+
+      <!-- ===== Orden generada ===== -->
+      <section id="compraConfirmada" class="compra-confirmada" hidden>
+        <div class="confirmacion-icono" aria-hidden="true">✓</div>
+        <h2>¡Compra confirmada!</h2>
+        <p id="textoConfirmacion"></p>
+        <ul id="resumenOrden" class="resumen-orden"></ul>
+        <p id="totalOrden"></p>
+        <p id="fechaConfirmacion" class="nota-carrito"></p>
+        <a class="btn btn-primario" href="index.html#catalogo">Volver a la cartelera</a>
+      </section>
+    </div>
+  </main>
+  <footer class="pie"><div class="contenedor"><p class="copy">© 2026 Cinemax Cesde · Proyecto académico</p></div></footer>
+  <script src="data.js"></script>
+  <script src="carrito.js"></script>
+</body>
+</html>
