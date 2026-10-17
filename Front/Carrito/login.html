@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio de sesión | CINEMAX CESDE</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="contenedor barra">
+      <a class="logo" href="index.html">Cinemax<span> Cesde</span></a>
+      <button class="btn-menu" id="btnMenu" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú">☰</button>
+      <nav class="menu" id="menu">
+        <a href="index.html">Inicio</a>
+        <a href="index.html#catalogo">Cartelera</a>
+        <a href="carrito.html">Carrito</a>
+        <a href="login.html" aria-current="page">Mi cuenta</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="seccion cuenta-pagina">
+    <div class="contenedor">
+      <div class="cuenta-caja">
+        <div id="mensajeCuenta" class="mensaje-cuenta" role="status" aria-live="polite"></div>
+
+        <!-- ===== Pantalla de inicio: iniciar sesión ===== -->
+        <section id="seccionLogin" hidden>
+          <h1 class="titulo-seccion">Iniciar sesión</h1>
+          <p>Ingresa con tu usuario para comprar entradas.</p>
+          <form id="formLogin" class="formulario">
+            <label>Usuario<input id="loginUsuario" type="text" autocomplete="username" required></label>
+            <label>Contraseña<input id="loginContrasena" type="password" autocomplete="current-password" required></label>
+            <button class="btn btn-primario" id="btnIniciar" type="submit">Iniciar sesión</button>
+          </form>
+          <button class="enlace-cuenta" id="btnIrRegistro" type="button">¿No tienes cuenta? Registrar usuario</button>
+        </section>
+
+        <!-- ===== Registro de usuario ===== -->
+        <section id="seccionRegistro" hidden>
+          <h1 class="titulo-seccion">Registrar usuario</h1>
+          <p>Crea tu cuenta con tus datos personales.</p>
+          <form id="formRegistro" class="formulario">
+            <label>Nombre completo<input id="regNombre" type="text" autocomplete="name" required minlength="2"></label>
+            <label>Correo electrónico<input id="regCorreo" type="email" autocomplete="email" required></label>
+            <label>Dirección de envío<input id="regDireccion" type="text" autocomplete="street-address" required></label>
+            <label>Usuario<input id="regUsuario" type="text" autocomplete="username" required minlength="3"></label>
+            <label>Contraseña<input id="regContrasena" type="password" autocomplete="new-password" required minlength="6"></label>
+            <button class="btn btn-primario" type="submit">Crear cuenta</button>
+          </form>
+          <button class="enlace-cuenta" id="btnIrLogin" type="button">Ya tengo cuenta. Iniciar sesión</button>
+        </section>
+
+        <!-- ===== Modificar datos (solo con sesión iniciada) ===== -->
+        <section id="seccionDatos" hidden>
+          <h1 class="titulo-seccion" id="saludo"></h1>
+          <p>Usuario: <strong id="datosUsuario"></strong>. Aquí puedes actualizar tu información personal.</p>
+          <form id="formDatos" class="formulario">
+            <label>Nombre completo<input id="datosNombre" type="text" required minlength="2"></label>
+            <label>Correo electrónico<input id="datosCorreo" type="email" required></label>
+            <label>Dirección de envío<input id="datosDireccion" type="text" required></label>
+            <button class="btn btn-primario" type="submit">Guardar cambios</button>
+          </form>
+          <div class="cuenta-acciones">
+            <a class="btn btn-secundario" href="index.html#catalogo">Ir a la cartelera</a>
+            <button class="btn btn-secundario" id="btnCerrarSesion" type="button">Cerrar sesión</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="pie"><div class="contenedor"><p class="copy">© 2026 Cinemax Cesde · Proyecto académico</p></div></footer>
+  <script src="data.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>
