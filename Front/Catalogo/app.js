@@ -7,6 +7,13 @@
 const MAX_ASIENTOS = 8;
 const estado = { funcionId: null, horarioId: null, seleccionados: [] };
 
+/* Carpeta de imágenes de las funciones: Imagenes/<nombre-de-la-funcion>.<extensión>
+   Ejemplo: "Noche de Neón" busca Imagenes/noche-de-neon.jpg
+   (y si no existe, prueba .png, .webp y .jpeg). Ojo: el nombre de la carpeta
+   debe escribirse igual que en el disco (mayúscula inicial). */
+const IMG_DIR = "Imagenes/";
+const IMG_EXTS = ["jpg", "png", "webp", "jpeg"];
+
 /* ---------- Referencias al DOM ---------- */
 const $ = id => document.getElementById(id);
 const el = {
@@ -20,17 +27,46 @@ const el = {
 
 const moneda = n => n.toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
 
+/* "Noche de Neón" -> "noche-de-neon" (minúsculas, sin tildes, espacios -> guion) */
+const nombreArchivo = titulo => titulo
+  .normalize("NFD").replace(/\p{M}/gu, "")
+  .toLowerCase().trim()
+  .replace(/[^a-z0-9]+/g, "-")
+  .replace(/^-+|-+$/g, "");
+
 /* ---------- Catálogo ---------- */
 function pintarCatalogo() {
-  el.lista.innerHTML = Almacen.obtenerFunciones().map(f => `
+  el.lista.innerHTML = Almacen.obtenerFunciones().map(f => {
+    const base = nombreArchivo(f.titulo);
+    return `
     <button class="tarjeta" data-id="${f.id}" aria-label="Ver función ${f.titulo}">
-      <div class="poster" style="background:${f.color}"><span>${f.titulo}</span></div>
+      <div class="poster" style="background:${f.color}">
+        <img class="poster-img" src="${IMG_DIR}${base}.${IMG_EXTS[0]}"
+             data-base="${base}" data-i="0" alt="">
+        <span>${f.titulo}</span>
+      </div>
       <div class="tarjeta-cuerpo">
         <span class="etiqueta">${f.genero}</span>
         <p>${f.duracion} min · ${Almacen.obtenerSala(f.salaId).nombre}</p>
       </div>
-    </button>`).join("");
+    </button>`;
+  }).join("");
 }
+
+/* Si la imagen no existe con una extensión, prueba la siguiente.
+   Si no existe con ninguna, se quita y queda el degradado de color.
+   (El evento "error" no sube por el DOM, por eso se usa la fase de captura.) */
+el.lista.addEventListener("error", e => {
+  const img = e.target;
+  if (!img.classList || !img.classList.contains("poster-img")) return;
+  const siguiente = Number(img.dataset.i) + 1;
+  if (siguiente < IMG_EXTS.length) {
+    img.dataset.i = siguiente;
+    img.src = `${IMG_DIR}${img.dataset.base}.${IMG_EXTS[siguiente]}`;
+  } else {
+    img.remove();
+  }
+}, true);
 
 el.lista.addEventListener("click", e => {
   const tarjeta = e.target.closest(".tarjeta");
