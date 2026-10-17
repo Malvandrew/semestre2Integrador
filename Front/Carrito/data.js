@@ -13,6 +13,8 @@ const CLAVES = {
   TARIFAS: "cine_tarifas",
   OCUPADOS: "cine_ocupados",   // asientos ya vendidos (por función + horario)
   SELECCION: "cine_seleccion", // selección actual -> la lee el carrito
+  CLIENTES: "cine_clientes",   // clientes registrados
+  SESION: "cine_sesion",       // usuario con sesión iniciada
   VERSION: "cine_version"
 };
 
@@ -138,8 +140,16 @@ const Almacen = {
   obtenerSeleccion() { return this._leer(CLAVES.SELECCION, null); },
   limpiarSeleccion() { localStorage.removeItem(CLAVES.SELECCION); },
 
-  /* Correo del cliente con sesión iniciada (lo guarda la pantalla de inicio) */
-  obtenerCliente() { return localStorage.getItem("cinemaxCesdeSession") || "Invitado"; },
+  /* ----- Clientes y sesión (los usa la pantalla de inicio de sesión) ----- */
+  obtenerClientes() { return this._leer(CLAVES.CLIENTES, []); },
+  guardarClientes(clientes) { this._escribir(CLAVES.CLIENTES, clientes); },
+  iniciarSesion(usuario) { localStorage.setItem(CLAVES.SESION, usuario); },
+  cerrarSesion() { localStorage.removeItem(CLAVES.SESION); },
+  /* Cliente con sesión iniciada, o null si nadie ha iniciado sesión */
+  obtenerCliente() {
+    const usuario = localStorage.getItem(CLAVES.SESION);
+    return this.obtenerClientes().find(c => c.usuario === usuario) || null;
+  },
 
   /* ----- Se llama SOLO cuando el pago se confirma (módulo del carrito) ----- */
   confirmarCompra() {
