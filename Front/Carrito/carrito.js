@@ -1,4 +1,4 @@
-/* Carrito académico: cada asiento representa una entrada. */
+/* Carrito académico: cada producto es un tipo de entrada (VIP o General). */
 function buscar(id) {
   return document.getElementById(id);
 }
@@ -9,70 +9,170 @@ function moneda(valor) {
   });
 }
 
+/* Clase base */
 class Producto {
-  constructor(seleccion, asiento) {
-    this.pelicula = seleccion.titulo;
-    this.sala = seleccion.salaNombre;
-    this.horario = seleccion.hora;
-    this.asiento = asiento.id;
-    this.tipo = asiento.tipo;
-    this.precio = Number(asiento.precio);
+  constructor(idProducto, nombre, descripcion, precio, stock) {
+    this.idProducto = idProducto;
+    this.nombre = nombre;
+    this.descripcion = descripcion;
+    this.precio = Number(precio);
+    this.stock = stock; // Asientos elegidos en la cartelera.
+  }
+  mostrarInfo() {
+    return this.nombre + " · " + this.descripcion;
+  }
+  actualizarStock(cantidad) {
+    this.stock = this.stock - cantidad;
+  }
+}
+
+/* Herencia: cada tipo de entrada agrega su propio dato */
+class EntradaVIP extends Producto {
+  constructor(descripcion, precio, stock) {
+    super("vip", "Entrada VIP", descripcion, precio, stock);
+    this.fila = "A";
+  }
+  // Polimorfismo: mostrarInfo() cambia según el tipo de entrada.
+  mostrarInfo() {
+    return "Entrada VIP · Fila " + this.fila + " · " + this.descripcion;
+  }
+}
+
+class EntradaGeneral extends Producto {
+  constructor(descripcion, precio, stock) {
+    super("general", "Entrada General", descripcion, precio, stock);
+    this.filas = "B y C";
+  }
+  mostrarInfo() {
+    return "Entrada General · Filas " + this.filas + " · " + this.descripcion;
   }
 }
 
 class ItemCarrito {
-  constructor(producto) {
+  constructor(producto, asientos) {
     this.producto = producto;
-    this.cantidad = 1; // No podemos vender dos veces el mismo asiento.
+    this.asientos = asientos;
+    this.cantidad = asientos.length;
   }
   obtenerSubtotal() {
     return this.producto.precio * this.cantidad;
   }
+  // Solo se compran los primeros asientos, según la cantidad.
+  obtenerAsientos() {
+    return this.asientos.slice(0, this.cantidad);
+  }
 }
 
 class CarritoCompra {
-  constructor(seleccion) {
-    this.seleccion = seleccion;
-    this.items = [];
-    if (seleccion !== null) {
-      for (const asiento of seleccion.asientos) {
-        const producto = new Producto(seleccion, asiento);
-        this.items.push(new ItemCarrito(producto));
+  constructor() {
+    this.listaProductos = [];
+    this.total = 0;
+  }
+  agregarProducto(producto, asientos) {
+    this.listaProductos.push(new ItemCarrito(producto, asientos));
+    this.calcularTotal();
+  }
+  eliminarProducto(idProducto) {
+    const restantes = [];
+    for (const item of this.listaProductos) {
+      if (item.producto.idProducto !== idProducto) restantes.push(item);
+    }
+    this.listaProductos = restantes;
+    this.calcularTotal();
+  }
+  // La cantidad va de 1 hasta el stock del producto.
+  actualizarCantidad(idProducto, cantidad) {
+    for (const item of this.listaProductos) {
+      if (item.producto.idProducto === idProducto && cantidad >= 1 && cantidad <= item.producto.stock) {
+        item.cantidad = cantidad;
       }
     }
+    this.calcularTotal();
   }
-  obtenerCantidad() {
-    return this.items.length;
-  }
-  obtenerTotal() {
+  calcularTotal() {
     let total = 0;
-    for (const item of this.items) {
+    for (const item of this.listaProductos) {
       total = total + item.obtenerSubtotal();
     }
+    this.total = total;
     return total;
+  }
+  obtenerCantidad() {
+    let cantidad = 0;
+    for (const item of this.listaProductos) {
+      cantidad = cantidad + item.cantidad;
+    }
+    return cantidad;
   }
 }
 
 class Orden {
-  constructor(carrito) {
-    this.numero = "CMX-" + Date.now();
-    this.fecha = new Date().toLocaleString("es-CO");
-    this.pelicula = carrito.seleccion.titulo;
-    this.sala = carrito.seleccion.salaNombre;
-    this.horario = carrito.seleccion.hora;
-    this.asientos = [];
-    for (const item of carrito.items) {
-      this.asientos.push(item.producto.asiento);
+  constructor(cliente) {
+    this.numeroOrden = "CMX-" + Date.now();
+    this.cliente = cliente;
+    this.listaProductos = [];
+    this.total = 0;
+    this.fecha = "";
+    this.estado = "Pendiente";
+  }
+  generarOrden(carrito) {
+    for (const item of carrito.listaProductos) {
+      this.listaProductos.push(item);
+      item.producto.actualizarStock(item.cantidad);
     }
-    this.total = carrito.obtenerTotal();
+    this.total = carrito.calcularTotal();
+    this.fecha = new Date().toLocaleString("es-CO");
+    this.estado = "Confirmada";
+  }
+  mostrarResumen() {
+    const lineas = [];
+    for (const item of this.listaProductos) {
+      lineas.push(item.producto.mostrarInfo() + " · Cantidad: " + item.cantidad +
+        " · Asientos: " + item.obtenerAsientos().join(", ") + " · " + moneda(item.obtenerSubtotal()));
+    }
+    return lineas;
   }
 }
 
 class InterfazCarrito {
   constructor() {
-    this.carrito = new CarritoCompra(Almacen.obtenerSeleccion());
+    this.seleccion = Almacen.obtenerSeleccion();
+    this.carrito = new CarritoCompra();
+    if (this.seleccion !== null) this.llenarCarrito();
     this.configurarEventos();
     this.dibujar();
+  }
+
+  // Separa los asientos de la cartelera en VIP y General.
+  llenarCarrito() {
+    const sel = this.seleccion;
+    const tarifas = Almacen.obtenerTarifas();
+    const descripcion = sel.titulo + " · " + sel.salaNombre + " · " + sel.hora;
+    const vip = [];
+    const general = [];
+    for (const asiento of sel.asientos) {
+      if (asiento.tipo === "vip") vip.push(asiento.id);
+      else general.push(asiento.id);
+    }
+    if (vip.length > 0) {
+      this.carrito.agregarProducto(new EntradaVIP(descripcion, tarifas.vip, vip.length), vip);
+    }
+    if (general.length > 0) {
+      this.carrito.agregarProducto(new EntradaGeneral(descripcion, tarifas.general, general.length), general);
+    }
+  }
+
+  // Guarda en Almacen solo los asientos que quedan en el carrito.
+  guardar() {
+    const ids = [];
+    for (const item of this.carrito.listaProductos) {
+      for (const id of item.obtenerAsientos()) ids.push(id);
+    }
+    if (ids.length === 0) {
+      Almacen.limpiarSeleccion();
+      return;
+    }
+    this.seleccion = Almacen.guardarSeleccion(this.seleccion.funcionId, this.seleccion.horarioId, ids);
   }
 
   configurarEventos() {
@@ -92,12 +192,12 @@ class InterfazCarrito {
     buscar("btnConfirmar").disabled = !hayEntradas;
     const contenedor = buscar("detalleEntradas");
     contenedor.innerHTML = "";
-    for (const item of this.carrito.items) {
+    for (const item of this.carrito.listaProductos) {
       contenedor.appendChild(this.crearEntrada(item));
     }
     buscar("cantidadEntradas").textContent = this.carrito.obtenerCantidad();
-    buscar("subtotalCarrito").textContent = moneda(this.carrito.obtenerTotal());
-    buscar("totalCarrito").textContent = moneda(this.carrito.obtenerTotal());
+    buscar("subtotalCarrito").textContent = moneda(this.carrito.total);
+    buscar("totalCarrito").textContent = moneda(this.carrito.total);
   }
 
   crearEntrada(item) {
@@ -107,64 +207,77 @@ class InterfazCarrito {
     // Las etiquetas son fijas. Después ponemos los datos como texto.
     tarjeta.innerHTML = `<div class="entrada-asiento" aria-hidden="true"></div>
       <div class="entrada-datos"><span class="entrada-tipo"></span><h3></h3>
-      <p class="entrada-funcion"></p><p class="entrada-ubicacion"></p></div>
+      <p class="entrada-ubicacion"></p>
+      <div class="cantidad"><button class="btn-cantidad btn-menos" type="button">−</button>
+      <span class="cantidad-valor"></span>
+      <button class="btn-cantidad btn-mas" type="button">+</button></div></div>
       <div class="entrada-precio"><strong></strong>
-      <button class="btn-peligro" type="button">Eliminar</button></div>`;
-    tarjeta.querySelector(".entrada-asiento").textContent = producto.asiento;
-    tarjeta.querySelector(".entrada-tipo").textContent = "Entrada " + producto.tipo;
-    tarjeta.querySelector("h3").textContent = producto.pelicula;
-    tarjeta.querySelector(".entrada-funcion").textContent = producto.sala + " · " + producto.horario;
-    tarjeta.querySelector(".entrada-ubicacion").textContent = "Asiento " + producto.asiento + " · 1 entrada";
+      <button class="btn-peligro btn-eliminar" type="button">Eliminar</button></div>`;
+    tarjeta.querySelector(".entrada-asiento").textContent = producto.idProducto === "vip" ? "VIP" : "GEN";
+    tarjeta.querySelector(".entrada-tipo").textContent = moneda(producto.precio) + " cada una";
+    tarjeta.querySelector("h3").textContent = producto.mostrarInfo();
+    tarjeta.querySelector(".entrada-ubicacion").textContent = "Asientos: " + item.obtenerAsientos().join(", ");
+    tarjeta.querySelector(".cantidad-valor").textContent = item.cantidad;
     tarjeta.querySelector("strong").textContent = moneda(item.obtenerSubtotal());
-    const boton = tarjeta.querySelector("button");
-    boton.setAttribute("aria-label", "Eliminar asiento " + producto.asiento);
-    boton.addEventListener("click", () => this.eliminarAsiento(producto.asiento));
+
+    const menos = tarjeta.querySelector(".btn-menos");
+    const mas = tarjeta.querySelector(".btn-mas");
+    menos.disabled = item.cantidad === 1;
+    mas.disabled = item.cantidad === producto.stock;
+    menos.addEventListener("click", () => this.cambiarCantidad(producto.idProducto, item.cantidad - 1));
+    mas.addEventListener("click", () => this.cambiarCantidad(producto.idProducto, item.cantidad + 1));
+    tarjeta.querySelector(".btn-eliminar").addEventListener("click", () => this.eliminar(producto));
     return tarjeta;
   }
 
-  eliminarAsiento(asientoId) {
-    const seleccion = this.carrito.seleccion;
-    const restantes = [];
-    for (const asiento of seleccion.asientos) {
-      if (asiento.id !== asientoId) restantes.push(asiento);
-    }
-    if (restantes.length === 0) {
-      this.vaciar();
-      return;
-    }
-    seleccion.asientos = restantes;
-    this.carrito = new CarritoCompra(seleccion);
-    seleccion.total = this.carrito.obtenerTotal();
-    Almacen.actualizarSeleccion(seleccion);
-    buscar("mensajeCarrito").textContent = "Se quitó el asiento " + asientoId + ".";
+  cambiarCantidad(idProducto, cantidad) {
+    this.carrito.actualizarCantidad(idProducto, cantidad);
+    this.guardar();
+    buscar("mensajeCarrito").textContent = "";
+    this.dibujar();
+  }
+
+  eliminar(producto) {
+    this.carrito.eliminarProducto(producto.idProducto);
+    this.guardar();
+    buscar("mensajeCarrito").textContent = "Se quitó " + producto.nombre + " del carrito.";
     this.dibujar();
   }
 
   vaciar() {
     Almacen.limpiarSeleccion();
-    this.carrito = new CarritoCompra(null);
+    this.carrito = new CarritoCompra();
     buscar("mensajeCarrito").textContent = "Se quitó la selección del carrito.";
     this.dibujar();
   }
 
   confirmar() {
     if (this.carrito.obtenerCantidad() === 0) return;
-    // Guarda la selección que estamos mostrando antes de confirmarla.
-    Almacen.actualizarSeleccion(this.carrito.seleccion);
-    const orden = new Orden(this.carrito);
+    this.guardar();
     if (Almacen.confirmarCompra() === false) {
       buscar("mensajeCarrito").textContent = "Algún asiento ya está ocupado. Vuelve a la cartelera y elige otros.";
       return;
     }
-    this.carrito = new CarritoCompra(null);
+    const orden = new Orden(Almacen.obtenerCliente());
+    orden.generarOrden(this.carrito);
+    this.carrito = new CarritoCompra();
     this.dibujar();
     buscar("carritoVacio").hidden = true;
     buscar("compraConfirmada").hidden = false;
-    buscar("textoConfirmacion").textContent = "Orden " + orden.numero + ". " +
-      orden.pelicula + " · " + orden.sala + " · " + orden.horario +
-      ". Asientos: " + orden.asientos.join(", ") + ". Total: " + moneda(orden.total) + ".";
-    buscar("fechaConfirmacion").textContent = "Fecha de confirmación: " + orden.fecha;
+    buscar("pasoCarrito").removeAttribute("aria-current");
+    buscar("pasoOrden").setAttribute("aria-current", "step");
     buscar("mensajeCarrito").textContent = "";
+    buscar("textoConfirmacion").textContent = "Orden " + orden.numeroOrden +
+      " · Cliente: " + orden.cliente + " · Estado: " + orden.estado;
+    const lista = buscar("resumenOrden");
+    lista.innerHTML = "";
+    for (const linea of orden.mostrarResumen()) {
+      const li = document.createElement("li");
+      li.textContent = linea;
+      lista.appendChild(li);
+    }
+    buscar("totalOrden").textContent = "Total: " + moneda(orden.total);
+    buscar("fechaConfirmacion").textContent = "Fecha: " + orden.fecha;
   }
 }
 
