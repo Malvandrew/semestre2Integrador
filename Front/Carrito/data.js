@@ -15,7 +15,11 @@ const CLAVES = {
   SELECCION: "cine_seleccion", // selección actual -> la lee el carrito
   VERSION: "cine_version"
 };
-const VERSION_DATOS = "1";
+
+/* Cada vez que cambies los datos iniciales, sube este número.
+   Los navegadores que tengan guardada otra versión se reinician
+   con los datos de abajo (ver Almacen.iniciar). */
+const VERSION_DATOS = "2";
 
 /* ---------- Datos iniciales (seed) ---------- */
 const DATOS_INICIALES = {
@@ -28,38 +32,39 @@ const DATOS_INICIALES = {
   tarifas: { vip: 25000, general: 15000 },
   funciones: [
     {
-      id: "f1", titulo: "Funcion 01", genero: "Acción", duracion: 118,
+      id: "f1", titulo: "Noche de Neón", genero: "Acción", duracion: 118,
       descripcion: "Una mensajera nocturna descubre un secreto que puede apagar toda la ciudad.",
       salaId: "s1", color: "linear-gradient(135deg,#ff00aa,#1a001a)",
       horarios: [{ id: "h1", hora: "14:00" }, { id: "h2", hora: "17:30" }, { id: "h3", hora: "20:45" }]
     },
     {
-      id: "f2", titulo: "Funcion 02", genero: "Suspenso", duracion: 104,
+      id: "f2", titulo: "El Último Código", genero: "Suspenso", duracion: 104,
       descripcion: "Un programador tiene 24 horas para detener un virus que él mismo escribió.",
       salaId: "s2", color: "linear-gradient(135deg,#ffd400,#1a1400)",
       horarios: [{ id: "h1", hora: "15:00" }, { id: "h2", hora: "18:00" }, { id: "h3", hora: "21:00" }]
     },
     {
-      id: "f3", titulo: "Funcion 03", genero: "Aventura", duracion: 126,
+      id: "f3", titulo: "Ruta 91", genero: "Aventura", duracion: 126,
       descripcion: "Cuatro amigos, una carretera sin fin y un mapa que no coincide con la realidad.",
       salaId: "s3", color: "linear-gradient(135deg,#ff00aa,#ffd400)",
       horarios: [{ id: "h1", hora: "13:30" }, { id: "h2", hora: "16:30" }, { id: "h3", hora: "19:30" }]
     },
     {
-      id: "f4", titulo: "Funcion 04", genero: "Terror", duracion: 97,
+      id: "f4", titulo: "Sombras del Mar", genero: "Terror", duracion: 97,
       descripcion: "Un faro abandonado guarda algo que no quiere ser encontrado.",
       salaId: "s1", color: "linear-gradient(135deg,#2b0020,#ff00aa)",
       horarios: [{ id: "h1", hora: "16:00" }, { id: "h2", hora: "19:00" }, { id: "h3", hora: "22:00" }]
     },
     {
-      id: "f5", titulo: "Funcion 05", genero: "Comedia", duracion: 101,
+      id: "f5", titulo: "Risas en Re Mayor", genero: "Comedia", duracion: 101,
       descripcion: "Una banda de garaje compite en un festival con un solo ensayo y cero talento.",
       salaId: "s2", color: "linear-gradient(135deg,#ffd400,#ff00aa)",
       horarios: [{ id: "h1", hora: "14:30" }, { id: "h2", hora: "17:00" }, { id: "h3", hora: "20:00" }]
     }
   ],
-  // Algunos asientos vendidos de ejemplo para ver el mapa en acción
-
+  // Asientos vendidos al inicio: ninguno (todos los mapas arrancan libres).
+  // Formato cuando haya ventas: { "f1|h2": ["A1", "A2"] }
+  ocupados: {}
 };
 
 /* ---------- API del "backend" ---------- */
@@ -76,7 +81,8 @@ const Almacen = {
     localStorage.setItem(clave, JSON.stringify(valor));
   },
 
-  /* Carga los datos iniciales solo si no existen (o cambió la versión) */
+  /* Carga los datos iniciales solo si no existen (o cambió la versión).
+     Al reiniciar también se descarta cualquier selección pendiente. */
   iniciar() {
     if (localStorage.getItem(CLAVES.VERSION) === VERSION_DATOS &&
         localStorage.getItem(CLAVES.FUNCIONES)) return;
@@ -84,6 +90,7 @@ const Almacen = {
     this._escribir(CLAVES.TARIFAS, DATOS_INICIALES.tarifas);
     this._escribir(CLAVES.FUNCIONES, DATOS_INICIALES.funciones);
     this._escribir(CLAVES.OCUPADOS, DATOS_INICIALES.ocupados);
+    localStorage.removeItem(CLAVES.SELECCION);
     localStorage.setItem(CLAVES.VERSION, VERSION_DATOS);
   },
 
@@ -129,8 +136,10 @@ const Almacen = {
     return seleccion;
   },
   obtenerSeleccion() { return this._leer(CLAVES.SELECCION, null); },
-  actualizarSeleccion(seleccion) { this._escribir(CLAVES.SELECCION, seleccion); },
   limpiarSeleccion() { localStorage.removeItem(CLAVES.SELECCION); },
+
+  /* Correo del cliente con sesión iniciada (lo guarda la pantalla de inicio) */
+  obtenerCliente() { return localStorage.getItem("cinemaxCesdeSession") || "Invitado"; },
 
   /* ----- Se llama SOLO cuando el pago se confirma (módulo del carrito) ----- */
   confirmarCompra() {
