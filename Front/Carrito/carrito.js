@@ -136,6 +136,11 @@ class Orden {
 
 class InterfazCarrito {
   constructor() {
+    // Solo los clientes con sesión iniciada pueden usar el carrito.
+    if (Almacen.obtenerCliente() === null) {
+      window.location.href = "login.html";
+      return;
+    }
     this.seleccion = Almacen.obtenerSeleccion();
     this.carrito = new CarritoCompra();
     if (this.seleccion !== null) this.llenarCarrito();
@@ -268,7 +273,8 @@ class InterfazCarrito {
     buscar("pasoOrden").setAttribute("aria-current", "step");
     buscar("mensajeCarrito").textContent = "";
     buscar("textoConfirmacion").textContent = "Orden " + orden.numeroOrden +
-      " · Cliente: " + orden.cliente + " · Estado: " + orden.estado;
+      " · Cliente: " + orden.cliente.nombre + " (" + orden.cliente.correo + ")" +
+      " · Envío: " + orden.cliente.direccionEnvio + " · Estado: " + orden.estado;
     const lista = buscar("resumenOrden");
     lista.innerHTML = "";
     for (const linea of orden.mostrarResumen()) {
