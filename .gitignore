@@ -1,0 +1,8 @@
+# Configuración del editor (cada quien tiene la suya)
+.idea/
+*.iml
+.vscode/
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
