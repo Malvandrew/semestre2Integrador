@@ -15,6 +15,9 @@
 .lista-ordenes strong { display: block; color: var(--texto); }
 .lista-ordenes .resalte { font-weight: 700; }
 
+/* Métodos de pago guardados: descripción a la izquierda, "Eliminar" a la derecha */
+.lista-metodos li { display: flex; align-items: center; justify-content: space-between; gap: var(--e3); color: var(--texto); }
+
 @media (max-width: 480px) {
   .cuenta-acciones { flex-direction: column; }
 }

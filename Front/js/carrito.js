@@ -100,6 +100,12 @@ class Orden {
     this.total = 0;
     this.fecha = "";
     this.estado = "Pendiente";
+    this.metodoPago = "";
+  }
+  // La pasarela decide el estado: "Confirmada" (pagada) o "Pendiente de pago" (efectivo).
+  registrarPago(metodoPago, estado) {
+    this.metodoPago = metodoPago;
+    this.estado = estado;
   }
   generarOrden(carrito) {
     for (const item of carrito.listaProductos) {
@@ -146,15 +152,38 @@ class Orden {
 class InterfazCarrito {
   constructor() {
     // Solo los clientes con sesión iniciada pueden usar el carrito.
-    if (Almacen.obtenerCliente() === null) {
+    const cliente = Almacen.obtenerCliente();
+    if (cliente === null) {
       window.location.href = "login.html?volver=carrito.html";
       return;
     }
-    this.seleccion = Almacen.obtenerSeleccion();
+    this.usuario = cliente.usuario;
+    this.seleccion = this.cargarSeleccion();
     this.carrito = new CarritoCompra();
     if (this.seleccion !== null) this.llenarCarrito();
     this.configurarEventos();
+    this.dibujarMetodosGuardados();
     this.dibujar();
+  }
+
+  /* Si viene de la cartelera, la selección nueva pasa a ser el carrito guardado
+     del cliente. Si no, se reanuda el carrito que el cliente dejó guardado. */
+  cargarSeleccion() {
+    const nueva = Almacen.obtenerSeleccion();
+    if (nueva !== null) {
+      Almacen.guardarCarrito(this.usuario, nueva);
+      Almacen.limpiarSeleccion();
+      return nueva;
+    }
+    const guardada = Almacen.obtenerCarrito(this.usuario);
+    if (guardada === null) return null;
+    // Si esa función ya no está en la cartelera, el carrito guardado no sirve.
+    if (!Almacen.obtenerFuncion(guardada.funcionId)) {
+      Almacen.borrarCarrito(this.usuario);
+      return null;
+    }
+    $("mensajeCarrito").textContent = "Recuperamos las entradas que dejaste en tu carrito.";
+    return guardada;
   }
 
   // Separa los asientos de la cartelera en VIP y General.
@@ -173,19 +202,55 @@ class InterfazCarrito {
     }
   }
 
-  // Guarda en Almacen solo los asientos que quedan en el carrito.
+  // Guarda en el carrito del cliente solo los asientos que quedan.
   guardar() {
     const ids = this.carrito.listaProductos.flatMap(item => item.obtenerAsientos());
     if (ids.length === 0) {
-      Almacen.limpiarSeleccion();
+      Almacen.borrarCarrito(this.usuario);
       return;
     }
-    this.seleccion = Almacen.guardarSeleccion(this.seleccion.funcionId, ids);
+    this.seleccion = Almacen.armarSeleccion(this.seleccion.funcionId, ids);
+    Almacen.guardarCarrito(this.usuario, this.seleccion);
   }
 
   configurarEventos() {
     $("btnVaciar").addEventListener("click", () => this.vaciar());
-    $("btnConfirmar").addEventListener("click", () => this.confirmar());
+    // "Confirmar compra" envía el formulario de pago: el navegador valida los campos primero.
+    $("formPago").addEventListener("submit", e => { e.preventDefault(); this.confirmar(); });
+    $("formPago").addEventListener("change", e => { if (e.target.name === "metodo") this.mostrarMetodo(); });
+  }
+
+  /* ----- Método de pago ----- */
+  // Los métodos guardados del cliente aparecen primero y quedan elegidos por defecto.
+  dibujarMetodosGuardados() {
+    $("metodosGuardados").innerHTML = Almacen.obtenerMetodosPago(this.usuario).map(m => `
+      <label class="opcion-pago"><input type="radio" name="metodo" value="guardado:${escapar(m.id)}">
+        <span>${escapar(m.descripcion)}</span><small>Guardado</small></label>`).join("");
+    $("formPago").querySelector('input[name="metodo"]').checked = true;
+    this.mostrarMetodo();
+  }
+
+  // Muestra solo los campos del método elegido. Los demás quedan desactivados
+  // para que el navegador no los valide.
+  mostrarMetodo() {
+    const tipo = $("formPago").elements.metodo.value.split(":")[0];
+    for (const campos of $("formPago").querySelectorAll("fieldset[data-metodo]")) {
+      campos.hidden = campos.dataset.metodo !== tipo;
+      campos.disabled = campos.hidden;
+    }
+  }
+
+  // Lo que se envía a la pasarela según el método elegido.
+  leerPago() {
+    const [tipo, id] = $("formPago").elements.metodo.value.split(":");
+    if (tipo === "guardado") return { tipo, id };
+    if (tipo === "tarjeta") {
+      return { tipo, numero: $("tarjetaNumero").value, titular: $("tarjetaTitular").value.trim(),
+               vence: $("tarjetaVence").value.trim(), cvv: $("tarjetaCvv").value, guardar: $("tarjetaGuardar").checked };
+    }
+    if (tipo === "pse") return { tipo, banco: $("pseBanco").value, documento: $("pseDocumento").value };
+    if (tipo === "billetera") return { tipo, app: $("billeteraApp").value, celular: $("billeteraCelular").value, guardar: $("billeteraGuardar").checked };
+    return { tipo };   // efectivo
   }
 
   dibujar() {
@@ -249,7 +314,7 @@ class InterfazCarrito {
   }
 
   vaciar() {
-    Almacen.limpiarSeleccion();
+    Almacen.borrarCarrito(this.usuario);
     this.carrito = new CarritoCompra();
     $("mensajeCarrito").textContent = "Se quitó la selección del carrito.";
     this.dibujar();
@@ -260,11 +325,14 @@ class InterfazCarrito {
     this.guardar();
     const orden = new Orden(Almacen.obtenerCliente(), this.seleccion);
     orden.generarOrden(this.carrito);
-    const resultado = Almacen.confirmarCompra(orden.aRegistro());   // marca asientos + guarda la orden
+    // Revisa asientos, cobra con la pasarela y guarda la orden.
+    const resultado = Almacen.confirmarCompra(orden.aRegistro(), this.leerPago());
     if (!resultado.ok) {
       $("mensajeCarrito").textContent = resultado.motivo;
+      $("mensajeCarrito").scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
+    orden.registrarPago(resultado.metodoPago, resultado.estado);
     orden.descontarStock();
     this.carrito = new CarritoCompra();
     this.dibujar();
@@ -273,9 +341,12 @@ class InterfazCarrito {
     $("pasoCarrito").removeAttribute("aria-current");
     $("pasoOrden").setAttribute("aria-current", "step");
     $("mensajeCarrito").textContent = "";
+    const enEfectivo = orden.estado === "Pendiente de pago";
+    $("tituloConfirmacion").textContent = enEfectivo ? "¡Reserva lista!" : "¡Compra confirmada!";
     $("textoConfirmacion").textContent = "Orden " + orden.numeroOrden +
       " · Cliente: " + orden.cliente.nombre + " (" + orden.cliente.correo + ")" +
-      " · Envío: " + orden.cliente.direccionEnvio + " · Estado: " + orden.estado;
+      " · Envío: " + orden.cliente.direccionEnvio + " · Pago: " + orden.metodoPago + " · Estado: " + orden.estado +
+      (enEfectivo ? ". Paga en la taquilla con este número de orden al menos 30 minutos antes de la función." : "");
     const lista = $("resumenOrden");
     lista.innerHTML = "";
     for (const linea of orden.mostrarResumen()) {

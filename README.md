@@ -51,6 +51,24 @@ Flujo: Inicio → Cartelera → Carrito (pide sesión) → Orden → Mi cuenta (
 | `ordenes` | número, usuario, cliente, función, ítems (tipo, asientos, subtotal), total, fecha, estado |
 | `clientes` | datos + `clave {sal, hash}` (nunca la contraseña) |
 | `seleccion` | temporal entre la cartelera y el carrito |
+| `carritos` | `{ usuario: seleccion }` carrito guardado de cada cliente; se reanuda al volver a iniciar sesión |
+| `metodos_pago` | `{ usuario: [ { id, tipo, descripcion, token? } ] }` métodos guardados: solo marca y últimos 4 dígitos, o el celular |
+| `boveda` | `{ token: número }` lado de la pasarela simulada: el único lugar con el número completo de una tarjeta guardada |
+
+## Pagos (simulados)
+
+Métodos: **tarjeta** de crédito o débito, **PSE**, **Nequi / Daviplata** y **efectivo en taquilla**
+(la orden queda "Pendiente de pago"). Las tarjetas y los celulares se pueden guardar al pagar y
+se eliminan en **Mi cuenta**. Primero se revisan los asientos y después se cobra (`Almacen.confirmarCompra`).
+
+| Tarjeta de prueba | Resultado |
+|---|---|
+| `4444 4444 4444 4444` | Aprobada (Visa) |
+| `4242 4242 4242 4242` | Aprobada (Visa) |
+| `5555 5555 5555 5555` | Rechazada (Mastercard) |
+
+Cualquier fecha futura (MM/AA) y cualquier CVV de 3 dígitos. Otro número: "tarjeta no reconocida".
+Para agregar tarjetas de prueba: `TARJETAS_PRUEBA` en `js/data.js`.
 
 **Cambiar datos iniciales:** edita `DATOS_INICIALES` y sube `VERSION_CATALOGO`. Reemplaza el
 catálogo sin borrar ventas, órdenes ni cuentas. Si cambias ids de funciones, también migra `ocupados`.
@@ -64,5 +82,5 @@ catálogo sin borrar ventas, órdenes ni cuentas. Si cambias ids de funciones, t
   editarlos desde las herramientas del navegador. Las contraseñas se guardan con PBKDF2-SHA256 + sal,
   pero eso no sustituye a un servidor. Para producción: backend con autenticación real
   (la capa `Almacen` está pensada para reemplazarse sin tocar las páginas).
-- La compra es simulada; no hay pagos.
+- La compra y la pasarela de pagos son simuladas: no se cobra nada real.
 - La foto de la portada se carga desde Unsplash (como en el diseño original). Para no depender de internet, descárgala a `img/portada.jpg` y cambia la URL en `css/inicio.css`.

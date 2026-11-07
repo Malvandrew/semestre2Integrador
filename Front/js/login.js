@@ -85,8 +85,29 @@ class InterfazLogin {
     $("datosNombre").value = cliente.nombre;
     $("datosCorreo").value = cliente.correo;
     $("datosDireccion").value = cliente.direccionEnvio;
+    this.dibujarMetodos(cliente.usuario);
     this.dibujarOrdenes(cliente.usuario);
     this.mostrar("seccionDatos");
+  }
+
+  // Métodos de pago guardados: solo marca y últimos 4 dígitos (o el celular).
+  dibujarMetodos(usuario) {
+    const metodos = Almacen.obtenerMetodosPago(usuario);
+    $("sinMetodos").hidden = metodos.length > 0;
+    const lista = $("listaMetodos");
+    lista.innerHTML = "";
+    for (const m of metodos) {
+      const li = document.createElement("li");
+      li.innerHTML = '<span></span><button class="boton boton-tenue boton-chico" type="button">Eliminar</button>';
+      li.querySelector("span").textContent = m.descripcion;
+      li.querySelector("button").setAttribute("aria-label", "Eliminar " + m.descripcion);
+      li.querySelector("button").addEventListener("click", () => {
+        Almacen.eliminarMetodoPago(usuario, m.id);
+        this.dibujarMetodos(usuario);
+        $("mensajeCuenta").textContent = "Se eliminó " + m.descripcion + ".";
+      });
+      lista.appendChild(li);
+    }
   }
 
   dibujarOrdenes(usuario) {
@@ -99,7 +120,8 @@ class InterfazLogin {
       const li = document.createElement("li");
       li.innerHTML = "<strong></strong><span></span> <span class=\"resalte\"></span>";
       li.querySelector("strong").textContent = o.numero + " · " + o.titulo;
-      li.children[1].textContent = o.salaNombre + " · " + o.hora + " · " + cantidad + (cantidad === 1 ? " entrada" : " entradas") + " · " + fechaLegible(o.fecha) + " · ";
+      li.children[1].textContent = o.salaNombre + " · " + o.hora + " · " + cantidad + (cantidad === 1 ? " entrada" : " entradas") + " · " + fechaLegible(o.fecha) + " · " +
+        (o.metodoPago ? o.metodoPago + " · " : "") + o.estado + " · ";
       li.children[2].textContent = moneda(o.total);
       lista.appendChild(li);
     }

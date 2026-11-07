@@ -20,6 +20,11 @@
      clientes   [ { nombre, correo, direccionEnvio, usuario,
                     clave:{sal,hash} } ]
      sesion     "usuario" con sesión iniciada
+     carritos   { [usuario]: seleccion }             <- carrito guardado de cada cliente
+     metodosPago { [usuario]: [ { id, tipo, descripcion, token? } ] }
+                <- métodos de pago guardados: SOLO marca y últimos 4 dígitos
+   PASARELA (simula la "bóveda" del procesador de pagos)
+     boveda     { [token]: numeroTarjeta }
    TEMPORAL
      seleccion  asientos elegidos que consume el carrito
    ========================================================== */
@@ -34,6 +39,9 @@ const CLAVES = {
   CLIENTES: "cine_clientes",
   SESION: "cine_sesion",
   SELECCION: "cine_seleccion",
+  CARRITOS: "cine_carritos",     // carrito guardado de cada cliente
+  METODOS_PAGO: "cine_metodos_pago",
+  BOVEDA: "cine_boveda",         // tarjetas guardadas (lado de la pasarela)
   ESQUEMA: "cine_esquema",       // versión de la ESTRUCTURA de los datos
   CATALOGO: "cine_catalogo",     // versión de los datos iniciales
   VERSION_ANTIGUA: "cine_version"
@@ -85,6 +93,15 @@ const DATOS_INICIALES = {
     { ...proyeccion("p3", "13:30"), salaId: "s3" }, { ...proyeccion("p3", "16:30"), salaId: "s3" },
     { ...proyeccion("p3", "19:30"), salaId: "s3" }
   ]
+};
+
+/* ---------- Pasarela de pagos SIMULADA ----------
+   No se cobra nada real. Solo responden estas tarjetas de prueba
+   (con cualquier fecha futura y cualquier CVV de 3 dígitos). */
+const TARJETAS_PRUEBA = {
+  "4444444444444444": { marca: "Visa", aprobada: true },
+  "4242424242424242": { marca: "Visa", aprobada: true },
+  "5555555555555555": { marca: "Mastercard", aprobada: false }
 };
 
 /* ---------- Almacenamiento: localStorage con respaldo en memoria ----------
@@ -181,6 +198,12 @@ const Almacen = {
 
   /* ----- Selección temporal (la consume el carrito) ----- */
   guardarSeleccion(funcionId, asientosIds) {
+    const seleccion = this.armarSeleccion(funcionId, asientosIds);
+    this._escribir(CLAVES.SELECCION, seleccion);
+    return seleccion;
+  },
+  /* Arma la selección (función + asientos con tipo y precio) sin guardarla */
+  armarSeleccion(funcionId, asientosIds) {
     const f = this.obtenerFuncion(funcionId);
     const pelicula = this.obtenerPelicula(f.peliculaId);
     const sala = this.obtenerSala(f.salaId);
@@ -197,11 +220,23 @@ const Almacen = {
       total: asientos.reduce((suma, a) => suma + a.precio, 0),
       fecha: new Date().toISOString()
     };
-    this._escribir(CLAVES.SELECCION, seleccion);
     return seleccion;
   },
   obtenerSeleccion() { return this._leer(CLAVES.SELECCION, null); },
   limpiarSeleccion() { this._quitar(CLAVES.SELECCION); },
+
+  /* ----- Carrito guardado de cada cliente (se reanuda al volver) ----- */
+  obtenerCarrito(usuario) { return this._leer(CLAVES.CARRITOS, {})[usuario] || null; },
+  guardarCarrito(usuario, seleccion) {
+    const carritos = this._leer(CLAVES.CARRITOS, {});
+    carritos[usuario] = seleccion;
+    this._escribir(CLAVES.CARRITOS, carritos);
+  },
+  borrarCarrito(usuario) {
+    const carritos = this._leer(CLAVES.CARRITOS, {});
+    delete carritos[usuario];
+    this._escribir(CLAVES.CARRITOS, carritos);
+  },
 
   /* ----- Clientes y sesión ----- */
   _clientes() { return this._leer(CLAVES.CLIENTES, []); },
@@ -238,28 +273,114 @@ const Almacen = {
     return { nombre: c.nombre, correo: c.correo, direccionEnvio: c.direccionEnvio, usuario: c.usuario };
   },
 
+  /* ----- Métodos de pago guardados (nunca el número completo de la tarjeta) ----- */
+  obtenerMetodosPago(usuario) { return this._leer(CLAVES.METODOS_PAGO, {})[usuario] || []; },
+  _guardarMetodos(usuario, metodos) {
+    const todos = this._leer(CLAVES.METODOS_PAGO, {});
+    todos[usuario] = metodos;
+    this._escribir(CLAVES.METODOS_PAGO, todos);
+  },
+  _agregarMetodo(usuario, metodo) {
+    const metodos = this.obtenerMetodosPago(usuario);
+    metodos.push({ id: "m" + Date.now().toString(36), ...metodo });
+    this._guardarMetodos(usuario, metodos);
+  },
+  _yaGuardado(usuario, descripcion) { return this.obtenerMetodosPago(usuario).some(m => m.descripcion === descripcion); },
+  eliminarMetodoPago(usuario, id) {
+    const metodos = this.obtenerMetodosPago(usuario);
+    const metodo = metodos.find(m => m.id === id);
+    if (metodo && metodo.token) {   // la pasarela también olvida la tarjeta
+      const boveda = this._leer(CLAVES.BOVEDA, {});
+      delete boveda[metodo.token];
+      this._escribir(CLAVES.BOVEDA, boveda);
+    }
+    this._guardarMetodos(usuario, metodos.filter(m => m.id !== id));
+  },
+
+  /* ----- Pasarela de pagos simulada -----
+     Devuelve { ok:true, estado, descripcion } o { ok:false, motivo }.
+     El efectivo no se cobra aquí: la orden queda "Pendiente de pago". */
+  procesarPago(usuario, pago) {
+    if (pago.tipo === "guardado") return this._cobrarGuardado(usuario, pago.id);
+    if (pago.tipo === "tarjeta") return this._cobrarTarjetaNueva(usuario, pago);
+    if (pago.tipo === "pse") return { ok: true, estado: "Confirmada", descripcion: "PSE · " + pago.banco };
+    if (pago.tipo === "billetera") {
+      const descripcion = pago.app + " · " + pago.celular;
+      if (pago.guardar && !this._yaGuardado(usuario, descripcion)) this._agregarMetodo(usuario, { tipo: "billetera", descripcion });
+      return { ok: true, estado: "Confirmada", descripcion };
+    }
+    if (pago.tipo === "efectivo") return { ok: true, estado: "Pendiente de pago", descripcion: "Efectivo en taquilla" };
+    return { ok: false, motivo: "Elige un método de pago." };
+  },
+  _cobrarTarjetaNueva(usuario, pago) {
+    const numero = pago.numero.replace(/\D/g, "");
+    if (!this._venceValido(pago.vence)) return { ok: false, motivo: "La tarjeta está vencida o la fecha no es válida." };
+    const tarjeta = TARJETAS_PRUEBA[numero];
+    if (!tarjeta) {
+      return { ok: false, motivo: "Tarjeta no reconocida. En modo de prueba usa 4444 4444 4444 4444 o 4242 4242 4242 4242." };
+    }
+    const descripcion = tarjeta.marca + " •••• " + numero.slice(-4);
+    const cobro = this._cobrar(numero, descripcion);
+    // Solo se guarda una tarjeta que pagó bien. El número completo queda en la bóveda.
+    if (cobro.ok && pago.guardar && !this._yaGuardado(usuario, descripcion)) {
+      const token = "tok_" + Date.now().toString(36);
+      const boveda = this._leer(CLAVES.BOVEDA, {});
+      boveda[token] = numero;
+      this._escribir(CLAVES.BOVEDA, boveda);
+      this._agregarMetodo(usuario, { tipo: "tarjeta", descripcion, vence: pago.vence, token });
+    }
+    return cobro;
+  },
+  _cobrarGuardado(usuario, id) {
+    const metodo = this.obtenerMetodosPago(usuario).find(m => m.id === id);
+    if (!metodo) return { ok: false, motivo: "Ese método de pago ya no está guardado." };
+    if (metodo.tipo === "billetera") return { ok: true, estado: "Confirmada", descripcion: metodo.descripcion };
+    if (!this._venceValido(metodo.vence)) return { ok: false, motivo: "Tu tarjeta guardada está vencida. Usa otra." };
+    return this._cobrar(this._leer(CLAVES.BOVEDA, {})[metodo.token], metodo.descripcion);
+  },
+  _cobrar(numero, descripcion) {
+    const tarjeta = TARJETAS_PRUEBA[numero];
+    if (!tarjeta || !tarjeta.aprobada) {
+      return { ok: false, motivo: "El banco rechazó el pago con " + descripcion + ". Prueba con otro método de pago." };
+    }
+    return { ok: true, estado: "Confirmada", descripcion };
+  },
+  /* "MM/AA": válida hasta el último día de ese mes */
+  _venceValido(vence) {
+    const partes = /^(0[1-9]|1[0-2])\/(\d{2})$/.exec(vence || "");
+    if (!partes) return false;
+    return new Date(2000 + Number(partes[2]), Number(partes[1]), 1) > new Date();
+  },
+
   /* ----- Órdenes ----- */
   obtenerOrdenes(usuario) {
     return this._leer(CLAVES.ORDENES, []).filter(o => o.usuario === usuario).reverse();
   },
 
   /* Se llama SOLO cuando el cliente confirma la compra.
-     Marca los asientos como vendidos y guarda la orden en un solo paso.
-     Devuelve { ok:true } o { ok:false, motivo }. */
-  confirmarCompra(orden) {
+     Revisa los asientos, cobra con la pasarela y, si todo sale bien,
+     marca los asientos como vendidos y guarda la orden.
+     Devuelve { ok:true, estado, metodoPago } o { ok:false, motivo }. */
+  confirmarCompra(orden, pago) {
     const todos = this._leer(CLAVES.OCUPADOS, {});
     const actuales = todos[orden.funcionId] || [];
     const nuevos = orden.items.flatMap(i => i.asientos);
     if (nuevos.some(id => actuales.includes(id))) {
       return { ok: false, motivo: "Algún asiento ya está ocupado. Vuelve a la cartelera y elige otros." };
     }
+    // Primero se revisan los asientos y después se cobra: nunca se cobra sin asientos.
+    const cobro = this.procesarPago(orden.usuario, pago);
+    if (!cobro.ok) return cobro;
+    orden.estado = cobro.estado;
+    orden.metodoPago = cobro.descripcion;
     todos[orden.funcionId] = [...actuales, ...nuevos];
     this._escribir(CLAVES.OCUPADOS, todos);
     const ordenes = this._leer(CLAVES.ORDENES, []);
     ordenes.push(orden);
     this._escribir(CLAVES.ORDENES, ordenes);
     this.limpiarSeleccion();
-    return { ok: true };
+    this.borrarCarrito(orden.usuario);
+    return { ok: true, estado: orden.estado, metodoPago: orden.metodoPago };
   }
 };
 
