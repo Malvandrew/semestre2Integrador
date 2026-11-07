@@ -1,0 +1,82 @@
+/* cartelera.css — solo para cartelera.html. Variables y componentes comunes: base.css */
+
+/* ===== Catálogo ===== */
+.grid-peliculas { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 18px; }
+.tarjeta {
+  background: var(--gris); border: 1px solid var(--borde); border-radius: var(--r-lg);
+  overflow: hidden; cursor: pointer;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.tarjeta:hover, .tarjeta:focus-within, .tarjeta.activa { transform: translateY(-4px); border-color: var(--fucsia); box-shadow: var(--brillo-fucsia); }
+.afiche {
+  position: relative; overflow: hidden; height: 260px; padding: var(--e3);
+  display: flex; align-items: flex-end;
+  background: linear-gradient(135deg, var(--fucsia), var(--gris));
+}
+.afiche img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.afiche-titulo { position: relative; font-size: 1.1rem; font-weight: 800; }
+.tarjeta-accion { background: var(--negro); border: 0; border-radius: var(--r-sm); padding: 3px var(--e2); font-weight: 800; text-align: left; cursor: pointer; }
+.tarjeta-accion:focus-visible { outline-offset: -2px; }
+.tarjeta-cuerpo { padding: var(--e3); }
+.tarjeta-cuerpo p { font-size: var(--t-sm); color: var(--texto-2); }
+.tarjeta-desc { margin-top: 6px; line-height: 1.4; }
+
+/* ===== Detalle: horarios + asientos ===== */
+.detalle { background: var(--gris); border-top: 2px solid var(--fucsia); }
+.detalle-cabecera { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--e3); flex-wrap: wrap; }
+.detalle-info { color: var(--texto-2); margin-bottom: var(--e2); }
+.horarios { display: flex; flex-wrap: wrap; gap: 10px; }
+.horario {
+  display: flex; flex-direction: column; align-items: center; line-height: 1.2;
+  background: var(--negro); border: 2px solid var(--gris-2); border-radius: var(--r-pill);
+  padding: var(--e2) 20px; cursor: pointer;
+}
+.horario strong { font-size: var(--t-md); }
+.horario small { font-size: var(--t-xs); color: var(--texto-3); }
+.horario:hover { border-color: var(--amarillo); }
+.horario[aria-pressed="true"] { background: var(--amarillo); border-color: var(--amarillo); color: var(--negro); }
+.horario[aria-pressed="true"] small { color: var(--negro); }
+
+/* ===== Asientos ===== */
+.leyenda { display: flex; flex-wrap: wrap; gap: var(--e2) 18px; margin-bottom: 18px; font-size: var(--t-sm); }
+.leyenda span { display: flex; align-items: center; gap: 6px; }
+.muestra { display: inline-block; width: 18px; aspect-ratio: 1; border-radius: var(--r-sm) var(--r-sm) 3px 3px; border: 2px solid var(--borde); background: var(--gris-2); }
+.muestra.vip { border-color: var(--amarillo); }
+.muestra.general { border-color: var(--blanco); }
+.muestra.seleccionado { background: var(--fucsia); border-color: var(--fucsia); }
+.muestra.ocupado { border-color: var(--gris-3); }
+.pantalla {
+  width: 80%; margin: 0 auto 22px; padding: 6px; text-align: center;
+  letter-spacing: 6px; font-size: .75rem; color: var(--negro); background: var(--blanco);
+  border-radius: 0 0 50% 50% / 0 0 30px 30px; box-shadow: 0 8px 24px var(--fucsia-medio);
+}
+.mapa { display: grid; gap: var(--e2); max-width: 560px; margin: 0 auto; }
+.fila { display: grid; grid-template-columns: 24px repeat(var(--columnas, 10), 1fr); gap: 6px; align-items: center; }
+.fila-letra { color: var(--amarillo); font-weight: 700; text-align: center; font-size: var(--t-sm); }
+.asiento {
+  width: 100%; aspect-ratio: 1; padding: 0; cursor: pointer;
+  border: 2px solid var(--borde); border-radius: var(--r-sm) var(--r-sm) 3px 3px;
+  background: var(--gris-2); font-size: .62rem; font-weight: 700;
+}
+.asiento.vip { border-color: var(--amarillo); }
+.asiento.general { border-color: var(--blanco); }
+.asiento:hover:not(:disabled) { box-shadow: var(--brillo-fucsia); }
+.asiento[aria-pressed="true"] { background: var(--fucsia); border-color: var(--fucsia); color: var(--negro); box-shadow: var(--brillo-fucsia); }
+.asiento:disabled { border-color: var(--gris-3); color: var(--texto-3); text-decoration: line-through; cursor: not-allowed; }
+
+/* ===== Resumen de la selección ===== */
+.resumen-seleccion {
+  display: flex; justify-content: space-between; align-items: center; gap: var(--e4); flex-wrap: wrap;
+  margin-top: 28px; padding: var(--e4); background: var(--negro);
+  border: 1px solid var(--fucsia); border-radius: var(--r-lg);
+}
+.aviso { color: var(--amarillo); font-size: var(--t-sm); min-height: 1.3em; }
+
+@media (max-width: 640px) {
+  .grid-peliculas { grid-template-columns: repeat(2, 1fr); gap: var(--e3); }
+  .afiche { height: 200px; }
+  .afiche-titulo { font-size: .95rem; }
+  .fila { grid-template-columns: 18px repeat(var(--columnas, 10), 1fr); gap: var(--e1); }
+  .asiento { font-size: .5rem; border-width: 1px; }
+  .resumen-seleccion .boton { width: 100%; }
+}
