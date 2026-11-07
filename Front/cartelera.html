@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CESDEMAX · Cartelera</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/cartelera.css">
+</head>
+<body data-pagina="cartelera">
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <header class="cabecera" id="cabecera"></header>
+
+  <main id="contenido">
+    <!-- ================= CATÁLOGO ================= -->
+    <section id="catalogo" class="pagina">
+      <div class="contenedor">
+        <div class="cabecera-pagina">
+          <span class="etiqueta etiqueta-fucsia">En cartelera</span>
+          <h1 class="titulo">Cartelera</h1>
+          <p>Elige tu función, tu horario y tus asientos en pocos clics.</p>
+        </div>
+        <div class="grid-peliculas" id="listaPeliculas"></div>
+      </div>
+    </section>
+
+    <!-- ================= DETALLE: horarios + asientos ================= -->
+    <section id="detalle" class="seccion detalle" hidden>
+      <div class="contenedor">
+        <div class="detalle-cabecera">
+          <div>
+            <h2 id="detTitulo" class="titulo"></h2>
+            <p id="detInfo" class="detalle-info"></p>
+          </div>
+          <button class="boton boton-tenue" id="btnCerrar" type="button">Cerrar ✕</button>
+        </div>
+
+        <h3 class="subtitulo">1. Elige un horario</h3>
+        <div class="horarios" id="listaHorarios"></div>
+
+        <div id="zonaAsientos" hidden>
+          <h3 class="subtitulo">2. Elige tus asientos</h3>
+
+          <div class="leyenda">
+            <span><i class="muestra vip"></i> VIP <b id="precioVip"></b></span>
+            <span><i class="muestra general"></i> General <b id="precioGeneral"></b></span>
+            <span><i class="muestra seleccionado"></i> Seleccionado</span>
+            <span><i class="muestra ocupado"></i> Ocupado</span>
+          </div>
+
+          <div class="pantalla">PANTALLA</div>
+          <div class="mapa" id="mapaAsientos"></div>
+
+          <div class="resumen-seleccion">
+            <div>
+              <p>Asientos: <b id="resAsientos" class="resalte">—</b></p>
+              <p>Total: <b id="resTotal" class="resalte">$0</b></p>
+              <p class="aviso" id="aviso" role="status"></p>
+            </div>
+            <button class="boton boton-primario" id="btnContinuar" type="button" disabled>Continuar al carrito</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie" id="pie"></footer>
+
+  <noscript><p class="pie-copy">Esta página necesita JavaScript para funcionar.</p></noscript>
+  <script src="js/util.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/cartelera.js"></script>
+</body>
+</html>

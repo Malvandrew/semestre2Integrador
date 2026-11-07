@@ -1,0 +1,189 @@
+/* ==========================================================
+   base.css — Sistema de diseño CESDEMAX
+   Se carga en TODAS las páginas. Aquí vive todo lo compartido:
+   variables, tipografía, cabecera, pie, botones, paneles,
+   mensajes y formularios. Los CSS de cada página (cartelera,
+   carrito, login) solo contienen lo que es exclusivo de ella.
+
+   Convenciones:
+   - Nombres de clase en español, kebab-case: componente-parte.
+   - Prohibido escribir colores, radios o tamaños "a mano":
+     se usan las variables de :root.
+   ========================================================== */
+
+:root {
+  /* ----- Paleta (negro, fucsia, amarillo, blanco) ----- */
+  --negro: #000;
+  --gris: #141414;
+  --gris-2: #232323;
+  --gris-3: #333;
+  --fucsia: #ff00aa;
+  --amarillo: #ffd400;
+  --blanco: #fff;
+
+  /* ----- Derivados de la paleta ----- */
+  --texto: var(--blanco);
+  --texto-2: #ccc;            /* texto secundario */
+  --texto-3: #aaa;            /* notas y textos de apoyo */
+  --borde: var(--gris-3);
+  --fucsia-fondo: rgba(255, 0, 170, .12);
+  --fucsia-fuerte: rgba(255, 0, 170, .25);
+  --fucsia-medio: rgba(255, 0, 170, .5);
+  --amarillo-fondo: rgba(255, 212, 0, .1);
+  --brillo-fucsia: 0 0 14px rgba(255, 0, 170, .55);
+
+  /* ----- Tipografía ----- */
+  --fuente: "DM Sans", "Segoe UI", system-ui, Arial, sans-serif;
+  --fuente-titulo: "Barlow Condensed", "Arial Narrow", "Segoe UI", sans-serif;   /* títulos: condensada y en mayúsculas */
+  --t-xs: .8rem;
+  --t-sm: .9rem;
+  --t-md: 1rem;
+  --t-lg: 1.25rem;
+  --t-xl: 2.2rem;
+  --t-hero: clamp(1.9rem, 6vw, 3.2rem);
+
+  /* ----- Espaciado ----- */
+  --e1: 4px;
+  --e2: 8px;
+  --e3: 12px;
+  --e4: 16px;
+  --e5: 24px;
+  --e6: 32px;
+  --e7: 48px;
+
+  /* ----- Radios de borde ----- */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-pill: 999px;
+}
+
+/* ===== Reinicio ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  min-height: 100vh; display: flex; flex-direction: column;
+  background: var(--negro); color: var(--texto);
+  font-family: var(--fuente); font-size: var(--t-md); line-height: 1.5;
+}
+main { flex: 1; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button, input { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+:where(a, button, input):focus-visible { outline: 2px solid var(--amarillo); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* ===== Utilidades ===== */
+.contenedor { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 var(--e4); }
+.resalte { color: var(--amarillo); }
+.nota { color: var(--texto-3); font-size: var(--t-sm); line-height: 1.6; }
+.saltar {
+  position: absolute; left: var(--e4); top: -100px; z-index: 20;
+  background: var(--amarillo); color: var(--negro); font-weight: 700;
+  padding: var(--e2) var(--e4); border-radius: var(--r-sm);
+}
+.saltar:focus { top: var(--e2); }
+
+/* ===== Cabecera y menú ===== */
+.cabecera {
+  position: sticky; top: 0; z-index: 10; min-height: 62px;
+  background: var(--negro); border-bottom: 2px solid var(--fucsia); box-shadow: var(--brillo-fucsia);
+}
+.barra { display: flex; align-items: center; justify-content: space-between; min-height: 60px; }
+.marca { display: inline-flex; align-items: center; gap: 10px; font-size: 1.25rem; font-weight: 800; letter-spacing: .02em; }
+.marca-texto b { color: var(--fucsia); }
+.marca-sello {
+  display: grid; place-items: center; width: 32px; aspect-ratio: 1;
+  background: var(--amarillo); color: var(--negro);
+  font-family: var(--fuente-titulo); font-size: 1.5rem; font-weight: 800; line-height: 1;
+}
+.menu { display: flex; gap: 22px; }
+.menu a { padding: 6px 2px; border-bottom: 2px solid transparent; }
+.menu a:hover, .menu a[aria-current="page"] { color: var(--amarillo); border-color: var(--amarillo); }
+.boton-menu {
+  display: none; background: none; border: 1px solid var(--fucsia);
+  border-radius: var(--r-sm); font-size: 1.4rem; padding: 2px 10px; cursor: pointer;
+}
+
+/* ===== Botones =====
+   .boton + una variante: primario | secundario | tenue
+   Modificadores: boton-chico, boton-icono, boton-bloque */
+.boton {
+  display: inline-block; border: 2px solid var(--fucsia); border-radius: var(--r-md);
+  background: transparent; color: var(--texto);
+  padding: 10px 20px; font-weight: 700; line-height: 1.2; text-align: center; cursor: pointer;
+  transition: transform .15s, box-shadow .15s, background .15s;
+}
+.boton:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--brillo-fucsia); }
+.boton:disabled { opacity: .4; cursor: not-allowed; }
+.boton-primario { background: var(--fucsia); color: var(--negro); }   /* negro sobre fucsia: contraste 5.8:1 */
+.boton-tenue { border-color: var(--borde); color: var(--texto-2); font-weight: 600; }
+.boton-tenue:hover:not(:disabled) { border-color: var(--fucsia); color: var(--texto); background: var(--fucsia-fondo); box-shadow: none; transform: none; }
+.boton-chico { padding: var(--e2) var(--e3); font-size: var(--t-sm); }
+.boton-icono { width: 32px; height: 32px; padding: 0; border-radius: var(--r-sm); }
+.boton-bloque { display: block; width: 100%; }
+.enlace { background: none; border: 0; color: var(--amarillo); text-decoration: underline; cursor: pointer; }
+
+/* ===== Títulos ===== */
+.titulo, .titulo-display { font-family: var(--fuente-titulo); font-weight: 800; text-transform: uppercase; }
+.titulo { font-size: var(--t-xl); line-height: 1.05; margin-bottom: var(--e4); border-left: 5px solid var(--fucsia); padding-left: var(--e3); }
+/* Título grande sin barra, para pantallas de presentación (index) */
+.titulo-display { font-size: clamp(2.9rem, 6vw, 4.4rem); line-height: .92; }
+.subtitulo { margin: var(--e5) 0 var(--e3); font-size: var(--t-lg); color: var(--amarillo); }
+.etiqueta { color: var(--amarillo); font-size: var(--t-xs); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.etiqueta-fucsia { color: var(--fucsia); }
+
+/* ===== Páginas internas (carrito, cuenta) ===== */
+.seccion { padding: var(--e6) 0; }
+.pagina { padding: var(--e6) 0 var(--e7); background: radial-gradient(circle at 85% 0%, var(--fucsia-fondo), transparent 40%); }
+.cabecera-pagina { margin-bottom: var(--e5); }
+.cabecera-pagina .etiqueta { display: block; margin-bottom: var(--e2); letter-spacing: .15em; font-weight: 800; }
+.cabecera-pagina .titulo { font-size: clamp(2.2rem, 5vw, 3rem); }
+.cabecera-pagina p { color: var(--texto-2); max-width: 680px; }
+.volver { display: inline-block; margin-bottom: var(--e5); color: var(--texto-3); font-size: var(--t-sm); }
+.volver:hover { color: var(--amarillo); }
+
+/* ===== Panel (tarjeta contenedora) ===== */
+.panel { background: var(--gris); border: 1px solid var(--borde); border-radius: var(--r-lg); padding: var(--e5); }
+.panel .subtitulo { margin-top: 0; }
+.panel-angosto { max-width: 460px; margin: 0 auto; }
+.panel-centrado { max-width: 680px; margin: var(--e6) auto; padding: 40px var(--e5); text-align: center; }
+.panel-centrado h2 { margin: var(--e3) 0; }
+.panel-centrado p { color: var(--texto-2); line-height: 1.7; overflow-wrap: anywhere; margin-bottom: var(--e4); }
+
+/* ===== Mensajes de estado ===== */
+.mensaje { margin-bottom: var(--e4); padding: var(--e3) var(--e4); border-left: 3px solid var(--amarillo); background: var(--amarillo-fondo); color: var(--amarillo); }
+.mensaje:empty { display: none; }
+
+/* ===== Formularios ===== */
+.formulario label { display: block; margin-bottom: 14px; color: var(--texto-2); font-size: var(--t-sm); }
+.formulario input {
+  display: block; width: 100%; margin-top: 6px; padding: 10px var(--e3);
+  border: 1px solid var(--borde); border-radius: var(--r-md); background: var(--negro);
+}
+.formulario input:focus { outline: none; border-color: var(--fucsia); }
+.formulario input:focus-visible { outline: 2px solid var(--amarillo); outline-offset: 2px; }
+.formulario .boton { margin-top: 6px; }
+
+/* ===== Pie de página ===== */
+.pie { background: var(--gris); border-top: 2px solid var(--fucsia); padding-top: 30px; }
+.pie-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--e5); }
+.pie h4 { margin-bottom: var(--e2); color: var(--amarillo); }
+.pie p { color: var(--texto-2); font-size: .92rem; }
+.pie a:hover { color: var(--fucsia); }
+.pie-copy { text-align: center; padding: 18px var(--e4); font-size: var(--t-xs); color: var(--texto-3); }
+
+/* ===== Móvil ===== */
+@media (max-width: 640px) {
+  .boton-menu { display: block; }
+  .menu {
+    display: none; position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; gap: 0; background: var(--negro); border-bottom: 2px solid var(--fucsia);
+  }
+  .menu.abierto { display: flex; }
+  .menu a { padding: var(--e4); border-bottom: 1px solid var(--gris-2); }
+}

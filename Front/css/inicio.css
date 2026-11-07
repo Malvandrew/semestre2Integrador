@@ -1,0 +1,90 @@
+/* inicio.css — solo para index.html (pantalla principal).
+   Variables y componentes comunes (botones, títulos, cabecera, pie): base.css */
+
+/* ===== Portada ===== */
+.portada {
+  position: relative; display: flex; align-items: center; overflow: hidden;
+  min-height: 640px; padding: 90px 10% 105px;
+  background-color: var(--gris);   /* respaldo si la foto no carga */
+  background-image:
+    linear-gradient(90deg, color-mix(in srgb, var(--negro) 93%, transparent) 2%, color-mix(in srgb, var(--negro) 72%, transparent) 47%, color-mix(in srgb, var(--negro) 12%, transparent) 100%),
+    linear-gradient(0deg, color-mix(in srgb, var(--negro) 48%, transparent), transparent 45%),
+    url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=2000&q=90");
+  background-position: center, center, center 47%;
+  background-size: cover;
+}
+.portada::after {
+  content: ""; position: absolute; right: 8%; bottom: -100px; width: 300px; height: 300px;
+  border: 1px solid color-mix(in srgb, var(--amarillo) 35%, transparent); border-radius: 50%;
+  box-shadow: 0 0 0 35px color-mix(in srgb, var(--amarillo) 4%, transparent), 0 0 0 70px color-mix(in srgb, var(--amarillo) 2.5%, transparent);
+}
+.portada-contenido { position: relative; z-index: 1; max-width: 600px; animation: subir .8s .1s both; }
+.sobretitulo { display: flex; align-items: center; gap: 10px; font-size: var(--t-xs); font-weight: 700; letter-spacing: .08em; }
+.sobretitulo span { width: 7px; aspect-ratio: 1; background: var(--fucsia); }
+.portada h1 {
+  margin: 22px 0 18px; font-family: var(--fuente-titulo); font-weight: 800; text-transform: uppercase;
+  font-size: clamp(4.2rem, 9vw, 7.2rem); line-height: .83;
+}
+.portada h1 em { color: var(--amarillo); font-style: normal; }
+.portada-texto { max-width: 400px; margin-bottom: 28px; color: var(--texto-2); line-height: 1.7; }
+.portada-acciones { display: flex; flex-wrap: wrap; gap: var(--e3); }
+.portada-nota, .portada-indice { position: absolute; bottom: 30px; z-index: 1; font-size: var(--t-xs); font-weight: 700; letter-spacing: .08em; }
+.portada-nota { left: 6.5%; display: flex; gap: var(--e3); }
+.portada-nota span:nth-child(2) { color: var(--fucsia); }
+.portada-indice { right: 6.5%; color: var(--amarillo); }
+
+/* ===== Bloques de contenido ===== */
+.bloque { padding: 100px 10%; }
+.etiqueta-seccion { display: flex; align-items: center; gap: 10px; font-size: var(--t-xs); font-weight: 700; letter-spacing: .08em; color: var(--texto-3); }
+.etiqueta-seccion span { color: var(--fucsia); }
+.bloque .titulo-display, .aliados .titulo-display { margin: -6px 0 var(--e4); }
+.bloque p { max-width: 560px; color: var(--texto-2); line-height: 1.8; }
+
+/* Nosotros */
+.nosotros { position: relative; display: grid; grid-template-columns: 1fr 2fr; gap: 36px; align-items: start; min-height: 370px; border-bottom: 1px solid var(--borde); }
+.nosotros-texto { max-width: 670px; }
+.nosotros .titulo-display span { color: var(--fucsia); }
+.enlace-flecha { display: inline-flex; gap: 14px; margin-top: 13px; color: var(--amarillo); font-weight: 700; }
+.enlace-flecha:hover { text-decoration: underline; }
+.sello {
+  position: absolute; right: 10%; bottom: 36px; width: 140px; height: 140px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  border: 1px solid var(--amarillo); border-radius: 50%; color: var(--amarillo);
+  font-size: .7rem; font-weight: 700; transform: rotate(-12deg);
+}
+.sello b { color: var(--fucsia); font-size: 1.4rem; }
+
+/* Historia */
+.historia { background: var(--gris); }
+.historia-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 8%; margin-top: 38px; }
+.linea-tiempo { border-top: 1px solid var(--borde); }
+.hito { display: grid; grid-template-columns: 100px 1fr; gap: 20px; padding: 23px 0; border-bottom: 1px solid var(--borde); }
+.hito-fecha { padding-top: 5px; color: var(--amarillo); font-size: var(--t-xs); font-weight: 700; }
+.hito h3 { margin-bottom: 7px; font-size: var(--t-md); }
+.hito p { margin: 0; font-size: var(--t-sm); }
+
+/* Aliados: banda amarilla */
+.aliados { padding: 70px 10%; background: var(--amarillo); color: var(--negro); }
+.aliados-interior { display: grid; grid-template-columns: 1.1fr 1fr auto; gap: 38px; align-items: center; max-width: 1200px; margin: auto; }
+.aliados .etiqueta-seccion, .aliados .etiqueta-seccion span { color: color-mix(in srgb, var(--negro) 70%, transparent); }
+.aliados .titulo-display { margin: 17px 0 0; font-size: clamp(2.6rem, 5vw, 3.8rem); }
+.aliados-interior > p { max-width: 560px; color: color-mix(in srgb, var(--negro) 80%, transparent); line-height: 1.7; }
+.boton-oscuro { background: var(--negro); border-color: var(--negro); color: var(--amarillo); }
+
+@keyframes subir { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 760px) {
+  .portada { min-height: 620px; padding: 80px 7% 90px; background-position: center, center, 57% center; }
+  .portada h1 { font-size: clamp(4.1rem, 16vw, 6.2rem); }
+  .bloque { padding: 75px 7%; }
+  .nosotros { grid-template-columns: 1fr; gap: 27px; }
+  .nosotros-texto { padding-bottom: 80px; }
+  .sello { right: 7%; bottom: 26px; width: 110px; height: 110px; font-size: .62rem; }
+  .historia-grid { grid-template-columns: 1fr; gap: 26px; }
+  .aliados { padding: 58px 7%; }
+  .aliados-interior { grid-template-columns: 1fr; gap: 18px; }
+  .aliados .boton { justify-self: start; }
+}
+@media (max-width: 390px) {
+  .hito { grid-template-columns: 78px 1fr; gap: var(--e3); }
+}

@@ -1,0 +1,59 @@
+/* carrito.css — solo para carrito.html. Variables y componentes comunes: base.css */
+
+.pasos-compra { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; margin-bottom: var(--e5); }
+.pasos-compra li { padding: var(--e2) var(--e4); border: 1px solid var(--gris-2); border-radius: var(--r-pill); font-size: .85rem; color: var(--texto-3); }
+.pasos-compra [aria-current="step"] { border-color: var(--fucsia); color: var(--texto); background: var(--fucsia-fondo); }
+
+.carrito-layout { display: flex; gap: var(--e5); align-items: flex-start; }
+.carrito-layout > .panel { flex: 1; min-width: 0; }
+.resumen-compra { flex: 0 0 320px !important; border-top: 3px solid var(--fucsia); }
+.panel-ayuda { margin-bottom: 18px; }
+
+/* Cada línea del carrito: un tipo de entrada */
+.entrada { display: flex; align-items: center; gap: var(--e4); padding: 22px 0; border-bottom: 1px dashed var(--borde); }
+.entrada:last-child { border-bottom: 0; }
+.entrada-insignia {
+  flex-shrink: 0; width: 54px; height: 62px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--fucsia); border-radius: var(--r-md); background: var(--fucsia-fondo);
+  color: var(--amarillo); font-size: var(--t-lg); font-weight: 800;
+}
+.entrada-datos { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.entrada-datos h3 { font-size: 1.1rem; margin: var(--e1) 0; }
+.entrada-datos p { color: var(--texto-2); font-size: var(--t-sm); margin-top: 3px; }
+.entrada-precio { text-align: right; }
+.entrada-precio strong { display: block; color: var(--amarillo); margin-bottom: var(--e2); white-space: nowrap; }
+.cantidad { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+
+.carrito-acciones { display: flex; flex-wrap: wrap; gap: var(--e3); padding-top: 22px; border-top: 1px solid var(--gris-2); }
+
+/* Resumen de compra */
+.linea-resumen { display: flex; justify-content: space-between; gap: var(--e4); padding: var(--e4) 0; border-bottom: 1px solid var(--gris-2); color: var(--texto-2); }
+.linea-resumen strong { color: var(--texto); }
+.linea-total { border-bottom: 0; align-items: center; font-size: 1.1rem; }
+.linea-total strong { color: var(--amarillo); font-size: 1.7rem; }
+.resumen-compra .boton { margin-top: var(--e5); }
+
+/* Estados vacío / confirmado */
+.icono-vacio { font-size: 3.5rem; color: var(--fucsia); }
+.icono-confirmado {
+  width: 60px; height: 60px; margin: 0 auto; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--fucsia-fondo); border: 1px solid var(--fucsia); color: var(--amarillo); font-size: 2rem;
+}
+.panel-centrado .boton { margin-top: var(--e3); }
+.lista-orden { list-style: none; text-align: left; margin-bottom: var(--e4); }
+.lista-orden li { padding: var(--e3) 0; border-bottom: 1px solid var(--gris-2); color: var(--texto-2); }
+
+@media (max-width: 900px) {
+  .carrito-layout { flex-direction: column; }
+  .carrito-layout > .panel, .resumen-compra { width: 100%; flex: auto !important; }
+}
+@media (max-width: 480px) {
+  .panel { padding: 18px; }
+  .entrada { flex-wrap: wrap; gap: var(--e3); }
+  .entrada-precio { width: 100%; display: flex; justify-content: space-between; align-items: center; text-align: left; }
+  .entrada-precio strong { margin: 0; }
+  .carrito-acciones { flex-direction: column; }
+  .carrito-acciones .boton { width: 100%; }
+  .pasos-compra { gap: 6px; }
+  .pasos-compra li { font-size: .74rem; padding: 7px 10px; }
+}
