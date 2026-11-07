@@ -166,7 +166,7 @@ function actualizarResumen() {
 el.btnContinuar.addEventListener("click", () => {
   Almacen.guardarSeleccion(estado.funcionId, estado.horarioId, estado.seleccionados);
   el.aviso.textContent = "Selección guardada. Redirigiendo al carrito…";
-  setTimeout(() => { window.location.href = "carrito.html"; }, 700);
+  setTimeout(() => { window.location.href = "../Carrito/carrito.html"; }, 700);
 });
 
 el.btnCerrar.addEventListener("click", () => {

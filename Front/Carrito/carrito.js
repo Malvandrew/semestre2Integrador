@@ -9,6 +9,16 @@ function moneda(valor) {
   });
 }
 
+/* El login es del equipo (Front/index.html). Aquí solo leemos quién inició sesión. */
+function obtenerCliente() {
+  const correo = localStorage.getItem("cinemaxCesdeSession");
+  const usuarios = JSON.parse(localStorage.getItem("cinemaxCesdeUsers") || "[]");
+  for (const usuario of usuarios) {
+    if (usuario.email === correo) return usuario;
+  }
+  return null;
+}
+
 /* Clase base */
 class Producto {
   constructor(idProducto, nombre, descripcion, precio, stock) {
@@ -137,8 +147,8 @@ class Orden {
 class InterfazCarrito {
   constructor() {
     // Solo los clientes con sesión iniciada pueden usar el carrito.
-    if (Almacen.obtenerCliente() === null) {
-      window.location.href = "login.html";
+    if (obtenerCliente() === null) {
+      window.location.href = "../index.html";
       return;
     }
     this.seleccion = Almacen.obtenerSeleccion();
@@ -263,7 +273,7 @@ class InterfazCarrito {
       buscar("mensajeCarrito").textContent = "Algún asiento ya está ocupado. Vuelve a la cartelera y elige otros.";
       return;
     }
-    const orden = new Orden(Almacen.obtenerCliente());
+    const orden = new Orden(obtenerCliente());
     orden.generarOrden(this.carrito);
     this.carrito = new CarritoCompra();
     this.dibujar();
@@ -273,8 +283,8 @@ class InterfazCarrito {
     buscar("pasoOrden").setAttribute("aria-current", "step");
     buscar("mensajeCarrito").textContent = "";
     buscar("textoConfirmacion").textContent = "Orden " + orden.numeroOrden +
-      " · Cliente: " + orden.cliente.nombre + " (" + orden.cliente.correo + ")" +
-      " · Envío: " + orden.cliente.direccionEnvio + " · Estado: " + orden.estado;
+      " · Cliente: " + orden.cliente.name + " (" + orden.cliente.email + ")" +
+      " · Estado: " + orden.estado;
     const lista = buscar("resumenOrden");
     lista.innerHTML = "";
     for (const linea of orden.mostrarResumen()) {
