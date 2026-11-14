@@ -7,10 +7,9 @@ const MAX_INTENTOS = 3;
 const DESTINOS_VALIDOS = ["index.html", "cartelera.html", "carrito.html"];   // a dónde se puede volver tras iniciar sesión
 
 class Cliente {
-  constructor(nombre, correo, direccionEnvio, usuario) {
+  constructor(nombre, correo, usuario) {
     this.nombre = nombre;
     this.correo = correo;
-    this.direccionEnvio = direccionEnvio;
     this.usuario = usuario;
   }
   // Devuelve null si se registró, o "usuario" / "correo" si ya existe.
@@ -18,7 +17,7 @@ class Cliente {
     const sal = Clave.nuevaSal();
     const hash = await Clave.hash(contrasena, sal);
     return Almacen.registrarCliente({
-      nombre: this.nombre, correo: this.correo, direccionEnvio: this.direccionEnvio,
+      nombre: this.nombre, correo: this.correo,
       usuario: this.usuario, clave: { sal, hash }
     });
   }
@@ -39,8 +38,8 @@ class Cliente {
     return correcta;
   }
   // Devuelve false si el correo ya lo usa otro cliente.
-  modificarDatos(nombre, correo, direccionEnvio) {
-    return Almacen.actualizarCliente(this.usuario, { nombre, correo, direccionEnvio });
+  modificarDatos(nombre, correo) {
+    return Almacen.actualizarCliente(this.usuario, { nombre, correo });
   }
 }
 
@@ -84,7 +83,6 @@ class InterfazLogin {
     $("datosUsuario").textContent = cliente.usuario;
     $("datosNombre").value = cliente.nombre;
     $("datosCorreo").value = cliente.correo;
-    $("datosDireccion").value = cliente.direccionEnvio;
     this.dibujarMetodos(cliente.usuario);
     this.dibujarOrdenes(cliente.usuario);
     this.mostrar("seccionDatos");
@@ -129,7 +127,7 @@ class InterfazLogin {
 
   async iniciarSesion() {
     if (!this.verificarSeguridad()) return;
-    const cliente = new Cliente("", "", "", $("loginUsuario").value.trim());
+    const cliente = new Cliente("", "", $("loginUsuario").value.trim());
     if (await cliente.iniciarSesion($("loginContrasena").value)) {
       this.irADestino();
       return;
@@ -146,8 +144,7 @@ class InterfazLogin {
   async registrar() {
     if (!this.verificarSeguridad()) return;
     const cliente = new Cliente(
-      $("regNombre").value.trim(), $("regCorreo").value.trim(),
-      $("regDireccion").value.trim(), $("regUsuario").value.trim()
+      $("regNombre").value.trim(), $("regCorreo").value.trim(), $("regUsuario").value.trim()
     );
     const contrasena = $("regContrasena").value;
     const repetido = await cliente.registrar(contrasena);
@@ -163,9 +160,9 @@ class InterfazLogin {
 
   modificarDatos() {
     const datos = Almacen.obtenerCliente();
-    const cliente = new Cliente(datos.nombre, datos.correo, datos.direccionEnvio, datos.usuario);
+    const cliente = new Cliente(datos.nombre, datos.correo, datos.usuario);
     const guardado = cliente.modificarDatos(
-      $("datosNombre").value.trim(), $("datosCorreo").value.trim(), $("datosDireccion").value.trim()
+      $("datosNombre").value.trim(), $("datosCorreo").value.trim()
     );
     this.dibujar();
     $("mensajeCuenta").textContent = guardado ? "Datos actualizados." : "Ese correo ya lo usa otra cuenta.";

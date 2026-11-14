@@ -144,7 +144,7 @@ class Orden {
     return {
       numero: this.numeroOrden,
       usuario: this.cliente.usuario,
-      cliente: { nombre: this.cliente.nombre, correo: this.cliente.correo, direccionEnvio: this.cliente.direccionEnvio },
+      cliente: { nombre: this.cliente.nombre, correo: this.cliente.correo },
       funcionId: this.seleccion.funcionId,
       titulo: this.seleccion.titulo,
       salaNombre: this.seleccion.salaNombre,
@@ -357,7 +357,7 @@ class InterfazCarrito {
     $("tituloConfirmacion").textContent = enEfectivo ? "¡Reserva lista!" : "¡Compra confirmada!";
     $("textoConfirmacion").textContent = "Orden " + orden.numeroOrden +
       " · Cliente: " + orden.cliente.nombre + " (" + orden.cliente.correo + ")" +
-      " · Envío: " + orden.cliente.direccionEnvio + " · Pago: " + orden.metodoPago + " · Estado: " + orden.estado +
+      " · Pago: " + orden.metodoPago + " · Estado: " + orden.estado +
       (enEfectivo ? ". Paga en la taquilla con este número de orden al menos 30 minutos antes de la función." : "");
     const lista = $("resumenOrden");
     lista.innerHTML = "";

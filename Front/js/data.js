@@ -17,7 +17,7 @@
      ordenes    [ { numero, usuario, cliente, funcionId, titulo,
                     salaNombre, hora, items[], total, fecha, estado } ]
    CUENTAS
-     clientes   [ { nombre, correo, direccionEnvio, usuario,
+     clientes   [ { nombre, correo, usuario,
                     clave:{sal,hash} } ]
      sesion     "usuario" con sesión iniciada
      carritos   { [usuario]: seleccion }             <- carrito guardado de cada cliente
@@ -271,7 +271,7 @@ const Almacen = {
     const usuario = Almacenamiento.leer(CLAVES.SESION);
     const c = this._clientes().find(x => x.usuario === usuario);
     if (!c) return null;
-    return { nombre: c.nombre, correo: c.correo, direccionEnvio: c.direccionEnvio, usuario: c.usuario };
+    return { nombre: c.nombre, correo: c.correo, usuario: c.usuario };
   },
 
   /* ----- Métodos de pago guardados (nunca el número completo de la tarjeta) ----- */
