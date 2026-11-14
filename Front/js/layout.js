@@ -11,7 +11,7 @@ const ENLACES_MENU = [
   { id: "inicio",    texto: "Inicio",    href: "index.html" },
   { id: "cartelera", texto: "Cartelera", href: "cartelera.html" },
   { id: "nosotros",  texto: "Nosotros",  href: "index.html#nosotros" },
-  { id: "aliados",   texto: "Aliados",   href: "index.html#aliados" },
+  { id: "Contacto",   texto: "Contacto",   href: "index.html#aliados" },
   { id: "carrito",   texto: "Carrito",   href: "carrito.html" },
   { id: "cuenta",    texto: "Mi cuenta", href: "login.html" }
 ];
@@ -33,7 +33,6 @@ const ENLACES_MENU = [
     <div class="contenedor pie-grid">
       <div>
         <h4>${MARCA.nombre}${MARCA.acento}</h4>
-        <p>Proyecto académico — Metodología Scrum.</p>
       </div>
       <div>
         <h4>Navegación</h4>
