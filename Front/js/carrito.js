@@ -60,6 +60,8 @@ class ItemCarrito {
 class CarritoCompra {
   constructor() {
     this.listaProductos = [];
+    this.subtotal = 0;
+    this.descuento = 0;
     this.total = 0;
   }
   agregarProducto(producto, asientos) {
@@ -80,7 +82,9 @@ class CarritoCompra {
     this.calcularTotal();
   }
   calcularTotal() {
-    this.total = this.listaProductos.reduce((suma, item) => suma + item.obtenerSubtotal(), 0);
+    this.subtotal = this.listaProductos.reduce((suma, item) => suma + item.obtenerSubtotal(), 0);
+    this.descuento = calcularDescuento(this.subtotal, this.obtenerCantidad());
+    this.total = this.subtotal - this.descuento;
     return this.total;
   }
   obtenerCantidad() {
@@ -97,6 +101,8 @@ class Orden {
     this.seleccion = seleccion;
     this.items = [];
     this.productos = [];
+    this.subtotal = 0;
+    this.descuento = 0;
     this.total = 0;
     this.fecha = "";
     this.estado = "Pendiente";
@@ -119,6 +125,8 @@ class Orden {
       });
     }
     this.total = carrito.calcularTotal();
+    this.subtotal = carrito.subtotal;
+    this.descuento = carrito.descuento;
     this.fecha = new Date().toISOString();
     this.estado = "Confirmada";
   }
@@ -142,6 +150,8 @@ class Orden {
       salaNombre: this.seleccion.salaNombre,
       hora: this.seleccion.hora,
       items: this.items,
+      subtotal: this.subtotal,
+      descuento: this.descuento,
       total: this.total,
       fecha: this.fecha,
       estado: this.estado
@@ -265,7 +275,9 @@ class InterfazCarrito {
       contenedor.appendChild(this.crearEntrada(item));
     }
     $("cantidadEntradas").textContent = this.carrito.obtenerCantidad();
-    $("subtotalCarrito").textContent = moneda(this.carrito.total);
+    $("subtotalCarrito").textContent = moneda(this.carrito.subtotal);
+    $("descuentoCarritoFila").hidden = this.carrito.descuento === 0;
+    $("descuentoCarrito").textContent = moneda(this.carrito.descuento);
     $("totalCarrito").textContent = moneda(this.carrito.total);
   }
 
@@ -354,6 +366,8 @@ class InterfazCarrito {
       li.textContent = linea;
       lista.appendChild(li);
     }
+    $("descuentoOrden").hidden = orden.descuento === 0;
+    $("descuentoOrden").textContent = "Descuento (10 %): −" + moneda(orden.descuento);
     $("totalOrden").textContent = "Total: " + moneda(orden.total);
     $("fechaConfirmacion").textContent = "Fecha: " + fechaLegible(orden.fecha);
   }

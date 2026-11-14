@@ -99,6 +99,7 @@
           <h2 class="subtitulo">Resumen de compra</h2>
           <div class="linea-resumen"><span>Entradas</span><strong id="cantidadEntradas">0</strong></div>
           <div class="linea-resumen"><span>Subtotal</span><strong id="subtotalCarrito">$0</strong></div>
+          <div class="linea-resumen" id="descuentoCarritoFila" hidden><span>Descuento (10 %)</span><strong>−<span id="descuentoCarrito"></span></strong></div>
           <div class="linea-resumen linea-total"><span>Total</span><strong id="totalCarrito">$0</strong></div>
           <p class="nota">Esta versión académica simula la compra. No se realiza ningún cobro real.</p>
           <button class="boton boton-primario boton-bloque" id="btnConfirmar" type="submit" form="formPago" disabled>Confirmar compra</button>
@@ -118,6 +119,7 @@
         <h2 id="tituloConfirmacion">¡Compra confirmada!</h2>
         <p id="textoConfirmacion"></p>
         <ul id="resumenOrden" class="lista-orden"></ul>
+        <p id="descuentoOrden" hidden></p>
         <p id="totalOrden"></p>
         <p id="fechaConfirmacion" class="nota"></p>
         <a class="boton boton-primario" href="cartelera.html">Volver a la cartelera</a>

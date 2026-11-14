@@ -124,10 +124,13 @@ el.mapa.addEventListener("click", e => {
 function actualizarResumen() {
   const ids = [...estado.seleccionados].sort((a, b) =>
     a.charAt(0).localeCompare(b.charAt(0)) || parseInt(a.slice(1)) - parseInt(b.slice(1)));
-  const total = estado.funcionId ? ids.reduce((s, id) => s + Almacen.precioAsiento(salaActual(), id), 0) : 0;
+  const subtotal = estado.funcionId ? ids.reduce((s, id) => s + Almacen.precioAsiento(salaActual(), id), 0) : 0;
+  const descuento = calcularDescuento(subtotal, ids.length);
 
   el.resAsientos.textContent = ids.length ? ids.join(", ") : "—";
-  el.resTotal.textContent = moneda(total);
+  $("resDescuentoFila").hidden = descuento === 0;
+  $("resDescuento").textContent = moneda(descuento);
+  el.resTotal.textContent = moneda(subtotal - descuento);
   el.btnContinuar.disabled = !(estado.funcionId && ids.length);
 }
 

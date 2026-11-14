@@ -26,6 +26,9 @@ Orden de scripts en cada página: `util.js` → `data.js` → `layout.js` → sc
 
 Flujo: Inicio → Cartelera → Carrito (pide sesión) → Orden → Mi cuenta (historial).
 
+Al comprar tres o más asientos en total, entre VIP y General, se aplica un 10 %
+de descuento al subtotal de todas las entradas.
+
 ## Reglas de diseño
 
 - La paleta (negro, fucsia, amarillo, blanco) está en `:root` de `base.css`. **Prohibido
