@@ -9,6 +9,8 @@ const moneda = n => Number(n).toLocaleString("es-CO", {
   style: "currency", currency: "COP", maximumFractionDigits: 0
 });
 
+const calcularDescuento = (subtotal, cantidad) => cantidad >= 3 ? subtotal * 0.1 : 0;
+
 const fechaLegible = iso => new Date(iso).toLocaleString("es-CO");
 
 /* Escapa texto antes de meterlo en un innerHTML */

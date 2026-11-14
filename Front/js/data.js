@@ -210,6 +210,7 @@ const Almacen = {
     const asientos = asientosIds.map(id => ({
       id, tipo: this.tipoAsiento(sala, id), precio: this.precioAsiento(sala, id)
     }));
+    const subtotal = asientos.reduce((suma, a) => suma + a.precio, 0);
     const seleccion = {
       funcionId: f.id,
       titulo: pelicula.titulo,
@@ -217,7 +218,7 @@ const Almacen = {
       salaNombre: sala.nombre,
       hora: f.hora,
       asientos,
-      total: asientos.reduce((suma, a) => suma + a.precio, 0),
+      total: subtotal - calcularDescuento(subtotal, asientos.length),
       fecha: new Date().toISOString()
     };
     return seleccion;
